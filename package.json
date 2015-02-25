@@ -1,0 +1,39 @@
+{
+  "name": "student-center",
+  "version": "0.0.0",
+  "description": "Good looking Cornell Student Center",
+  "main": "server.js",
+  "dependencies": {
+    "body-parser": "^1.9.2",
+    "chalk": "^0.5.1",
+    "cookie-session": "^1.1.0",
+    "es6-promise": "^2.0.0",
+    "express": "^4.10.2",
+    "zombie": "^2.2.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "node server.js",
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": "0.10.x"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ajay-gandhi/student-center.git"
+  },
+  "keywords": [
+    "cornell",
+    "student",
+    "center",
+    "courses",
+    "classes"
+  ],
+  "author": "Ajay Gandhi",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ajay-gandhi/student-center/issues"
+  },
+  "homepage": "https://github.com/ajay-gandhi/student-center"
+}

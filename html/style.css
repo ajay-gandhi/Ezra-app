@@ -1,0 +1,135 @@
+body {
+  background-color: #F0F0F0;
+}
+
+/**
+ * Login Module
+ */
+div#login-wrapper {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  width: 100%;
+  height: 100%;
+}
+div#login {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  margin-top: -145px;
+  margin-left: -175px;
+  text-align: center;
+  width: 350px;
+  height: 290px;
+  border: 5px solid #333333;
+  border-radius: 20px;
+  background-color: #FFFFFF;
+  overflow: hidden;
+}
+div#login h1 {
+  margin-bottom: 30px;
+}
+input.login-input {
+  font-size: 18px;
+  height: 40px;
+  -webkit-box-shadow: none !important;
+  -moz-box-shadow: none !important;
+  box-shadow: none !important;
+}
+small#login-footer {
+  position: relative;
+  top: 10px;
+}
+div#login-cover {
+  opacity: 0.0;
+  background-color: #777777;
+  display: none;
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  z-index: 999;
+  width: 100%;
+  height: 100%;
+}
+div#login-result {
+  position: absolute;
+  z-index: 1000;
+  color: #FFFFFF;
+  line-height: 125px;
+  font-size: 80px;
+  text-align: center;
+  width: 125px;
+  height: 125px;
+  border-radius: 20px;
+}
+
+/**
+ * Terms of Use
+ */
+div#tou-wrapper {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  width: 100%;
+  height: 100%;
+}
+div#terms-of-use {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  margin-top: -225px;
+  margin-left: -175px;
+  width: 350px;
+  height: 450px;
+  border: 5px solid #333333;
+  border-radius: 20px;
+  background-color: #FFFFFF;
+  overflow: hidden;
+  padding: 10px;
+  font-size: 18px;
+  line-height: 1.4em;
+}
+div#tou-content {
+  width: 320px;
+  height: 420px;
+  overflow: auto;
+}
+
+/**
+ * Module system for home page
+ */
+header#home {
+  position: fixed;
+  top: 0px;
+  left: 0px;
+  width: 100%;
+  height: 50px;
+  background-color: #333333;
+  color: #FFFFFF;
+  text-align: center;
+}
+header#home p.h1 {
+  margin: 3px;
+}
+div#modules {
+  margin-top: 50px;
+  border: 1px solid green;
+  padding-right: 40px;
+}
+div.module {
+  display: inline-block;
+  margin: 20px;
+  width: 100%;
+  height: 100%;
+  padding: 10px;
+  border: 5px solid #333333;
+  border-radius: 20px;
+}
+div#schedule {
+  max-width: 600px;
+  max-height: 600px;
+}
+div#dining {
+  max-width: 400px;
+  max-height: 400px;
+}
