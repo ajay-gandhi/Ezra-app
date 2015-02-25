@@ -1,39 +1,25 @@
 {
-  "name": "student-center",
-  "version": "0.0.0",
-  "description": "Good looking Cornell Student Center",
-  "main": "server.js",
-  "dependencies": {
-    "body-parser": "^1.9.2",
-    "chalk": "^0.5.1",
-    "cookie-session": "^1.1.0",
-    "es6-promise": "^2.0.0",
-    "express": "^4.10.2",
-    "zombie": "^2.2.1"
-  },
-  "devDependencies": {},
-  "scripts": {
-    "test": "node server.js",
-    "start": "node server.js"
-  },
-  "engines": {
-    "node": "0.10.x"
+  "main": "html/start.html",
+  "name": "ezra-app",
+  "description": "Native app for Ezra",
+  "version": "0.1.0",
+  "window": {
+    "title": "Ezra",
+    "_icon": "link.png",
+    "toolbar": false,
+    "frame": true,
+    "width": 380,
+    "height": 340,
+    "position": "center",
+    "transparent": false
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/ajay-gandhi/student-center.git"
+    "url": "git://github.com/ajay-gandhi/Ezra-app.git"
   },
-  "keywords": [
-    "cornell",
-    "student",
-    "center",
-    "courses",
-    "classes"
-  ],
-  "author": "Ajay Gandhi",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/ajay-gandhi/student-center/issues"
-  },
-  "homepage": "https://github.com/ajay-gandhi/student-center"
+  "dependencies": {
+    "es6-promise": "^2.0.1",
+    "express": "^4.12.0",
+    "zombie": "^2.5.1"
+  }
 }

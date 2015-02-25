@@ -11,7 +11,7 @@ $(document).ready(function () {
     $('button#login-button').text('Logging in...');
 
     $.ajax({
-      url: 'login',
+      url: 'http://127.0.0.1:3005/login',
       method: 'POST',
       data: {
         netid: netid,
@@ -27,13 +27,14 @@ $(document).ready(function () {
       } else {
         login_result(true, function () {
           $('div#login')
-            .delay(300)
+            .delay(500)
             .animate({
               top: '-300px'
             }, {
               duration: $(window).height() / 2,
               complete: function () {
                 // Open home.html
+                // alert('done');
                 window.open('index.html', '_self');
               }
             });
@@ -103,7 +104,3 @@ var get_courses = function(callback) {
     callback(data);
   });
 }
-
-
-
-

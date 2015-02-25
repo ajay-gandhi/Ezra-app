@@ -1,4 +1,4 @@
-var zombie = require('zombie'),
+var Zombie = require('zombie'),
     Promise = require('es6-promise').Promise;
 
 var student_center_url = 'http://studentcenter.cornell.edu';
@@ -6,36 +6,45 @@ var student_center_url = 'http://studentcenter.cornell.edu';
 module.exports = (function () {
 
   function StudentCenter() {
-    this.browser = new zombie();
+    this.browser = new Zombie();
   }
 
+  /**
+   * Attempts to login given a NetID and password via the headless browser.
+   * Requires: [String] netid - The NetID of the student
+   *           [String] password - The password associated with the NetID
+   * Returns: [Promise] Resolves a new StudentCenter object or rejects the title
+   *   if login was unsuccessful.
+   */
   StudentCenter.prototype.login = function (netid, password) {
     var self = this;
     var browser = self.browser;
 
     return new Promise(function (resolve, reject) {
       // Visit Student Center
-      browser.visit(student_center_url).then(function () {
-        // Wait for all ze redirects
-        browser.wait().then(function () {
-
+      browser
+        .visit(student_center_url)
+        .then(function () {
+          // Wait for all ze redirects
+          return browser.wait();
+        })
+        .then(function () {
           // Fill in NetID and pw
           browser.fill('netid', netid);
           browser.fill('password', password);
           browser.select('realm', 'CIT.CORNELL.EDU');
 
-          browser.pressButton('Submit', function () {
-            if (browser.text('title') === 'Student Center') {
-              // Login successful
-              resolve(self);
-            } else {
-              // Login failed
-              reject('Stuck at: ' + browser.text('title'));
-            }
-          });
-
+          return browser.pressButton('Submit');
+        })
+        .then(function () {
+          if (browser.text('title') === 'Student Center') {
+            // Login successful
+            resolve(self);
+          } else {
+            // Login failed
+            reject('Stuck at: ' + browser.text('title'));
+          }
         });
-      });
     });
   }
 
