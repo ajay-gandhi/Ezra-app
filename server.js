@@ -1,10 +1,17 @@
 var express       = require('express'),
+    bodyParser    = require('body-parser'),
     path          = require('path'),
     Promise       = require('es6-promise').Promise,
     StudentCenter = require(path.resolve('.', 'studentcenter'));
 
 var app = express();
 var student;
+
+// Enable POST requests
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({
+  extended: true
+})); 
 
 // Requesting user's courses
 app.post('/login', function (req, res) {
