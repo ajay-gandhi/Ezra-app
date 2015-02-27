@@ -18,7 +18,7 @@ server.post('/login', function (req, res) {
   var password = req.body.password;
 
   var sc = new StudentCenter();
-  // res.send('false');
+
   sc.login(netid, password)
     .then(function (sc_new) {
       // Store the student's headless browser locally
@@ -32,16 +32,16 @@ server.post('/login', function (req, res) {
 });
 
 // Serves the student's courses in JSON
-app.get('/courses', function (req, res) {
-  var netid = req.query.netid;
-  var StudentCenter = students[netid];
+// app.get('/courses', function (req, res) {
+//   var netid = req.query.netid;
+//   var StudentCenter = students[netid];
 
-  // Get the student's courses
-  StudentCenter.getCourses().then(function (courses) {
-    update_timeout(netid);
-    res.send(JSON.stringify(courses));
-  });
-});
+//   // Get the student's courses
+//   StudentCenter.getCourses().then(function (courses) {
+//     update_timeout(netid);
+//     res.send(JSON.stringify(courses));
+//   });
+// });
 
 // For testing
 server.get('/hello', function (req, res) {
