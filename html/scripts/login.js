@@ -1,6 +1,16 @@
 var netid;
+var ipc = require('ipc');
 
 $(document).ready(function () {
+  // Meta actions (close, minimize)
+  $('button#close').click(function () {
+    ipc.send('close-window-event', 'true');
+  });
+  $('button#minimize').click(function () {
+    ipc.send('minimize-window-event', 'true');
+  });
+
+  // Login actions
   $('button#login-button').click(function (e) {
     netid = $('input#netid').val();
 
@@ -10,6 +20,7 @@ $(document).ready(function () {
     $('button#login-button').prop('disabled', true);
     $('button#login-button').text('Logging in...');
 
+    // Ajax request to server
     $.ajax({
       url: 'http://127.0.0.1:3005/login',
       method: 'POST',
@@ -19,12 +30,14 @@ $(document).ready(function () {
       }
     }).done(function (data) {
       if (data.toString() === 'false') {
+        // Login failed
         login_result(false, function () {
           $('button#login-button').prop('disabled', false);
           $('button#login-button').text('Login');
         });
 
       } else {
+        // Login successful
         login_result(true, function () {
           $('div#login')
             .delay(500)
@@ -33,9 +46,8 @@ $(document).ready(function () {
             }, {
               duration: $(window).height() / 2,
               complete: function () {
-                // Open home.html
-                // alert('done');
-                window.open('index.html', '_self');
+                // Tell backend to open index.html
+                ipc.send('login-successful', 'true');
               }
             });
         });
@@ -87,20 +99,4 @@ var login_result = function (successful, callback) {
           });
       }
     });
-}
-
-/**
- * Makes an API request to fetch the student's courses
- * Requires: [function] callback - A function to call after the AJAX call
- *              returns the courses
- */
-var get_courses = function(callback) {
-  $.ajax({
-    url: 'courses',
-    method: 'GET',
-    data: { netid: netid.toString() }
-  }).done(function (data) {
-    data = JSON.parse(data);
-    callback(data);
-  });
 }

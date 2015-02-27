@@ -4,8 +4,10 @@
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css">
   <link rel="stylesheet" type="text/css" href="css/login.css" />
   <title>Ezra</title>
-  <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
-  <script type="text/javascript" src="scripts/login.js"></script>
+  <script type="text/javascript">
+    window.$ = window.jQuery = require('./scripts/jquery.min.js');
+  </script>
+  <script type="text/javascript" src="./scripts/login.js"></script>
 </head>
 <body>
   <div id="login-wrapper">
@@ -23,6 +25,9 @@
       <small id="login-footer">By using this app you agree to the <a href="terms-of-use.html">Terms of Use</a>.</small>
       <div id="login-cover"></div>
       <div id="login-result">&#10003;</div>
+
+      <button type="button" id="close" class="btn btn-danger meta">&times;</button>
+      <button type="button" id="minimize" class="btn btn-warning meta">&#8211;</button>
     </div>
   </div>
 </body>
