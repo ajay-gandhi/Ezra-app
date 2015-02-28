@@ -10,6 +10,29 @@ module.exports = (function () {
   }
 
   /**
+   * Initializes the headless browser by visiting studentcenter.cornell.edu
+   * Returns: [Promise] An initialized StudentCenter object
+   */
+  StudentCenter.prototype.init = function () {
+    var self = this;
+    var browser = self.browser;
+
+    return new Promise(function (resolve, rejeect) {
+      // Visit Student Center
+      browser
+        .visit(student_center_url)
+        .then(function () {
+          // Wait for redirects
+          return browser.wait();
+        })
+        .then(function () {
+          // Return the init'ed object
+          resolve(self);
+        });
+    });
+  }
+
+  /**
    * Attempts to login given a NetID and password via the headless browser.
    * Requires: [String] netid - The NetID of the student
    *           [String] password - The password associated with the NetID
@@ -21,21 +44,12 @@ module.exports = (function () {
     var browser = self.browser;
 
     return new Promise(function (resolve, reject) {
-      // Visit Student Center
+      // Fill in NetID and pw
       browser
-        .visit(student_center_url)
-        .then(function () {
-          // Wait for all ze redirects
-          return browser.wait();
-        })
-        .then(function () {
-          // Fill in NetID and pw
-          browser.fill('netid', netid);
-          browser.fill('password', password);
-          browser.select('realm', 'CIT.CORNELL.EDU');
-
-          return browser.pressButton('Submit');
-        })
+        .fill('netid', netid)
+        .fill('password', password)
+        .select('realm', 'CIT.CORNELL.EDU')
+        .pressButton('Submit')
         .then(function () {
           if (browser.text('title') === 'Student Center') {
             // Login successful
