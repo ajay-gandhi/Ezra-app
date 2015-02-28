@@ -6,7 +6,6 @@
     "body-parser": "^1.12.0",
     "es6-promise": "^2.0.1",
     "express": "^4.12.0",
-    "phantom": "^0.7.2",
     "zombie": "^2.5.1"
   }
 }
