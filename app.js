@@ -50,7 +50,7 @@ ipc.on('minimize-window-event', function(event, arg) {
 // Login was successful
 ipc.on('login-successful', function (event, arg) {
   // Resize and center
-  main_window.setSize(900, 600);
+  main_window.setSize(930, 630);
   main_window.center();
 
   // Load new page
