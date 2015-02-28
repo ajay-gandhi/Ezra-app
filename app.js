@@ -21,7 +21,7 @@ app.on('ready', function () {
   main_window = new BrowserWindow({
     width: 380,
     height: 320,
-    resizable: false,
+    resizable: true,
     frame: false,
     transparent: true
   });
@@ -50,7 +50,7 @@ ipc.on('minimize-window-event', function(event, arg) {
 // Login was successful
 ipc.on('login-successful', function (event, arg) {
   // Resize and center
-  main_window.setSize(800, 600);
+  main_window.setSize(900, 600);
   main_window.center();
 
   // Load new page

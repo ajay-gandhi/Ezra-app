@@ -13,6 +13,7 @@ $(document).ready(function () {
   // Login actions
   $('button#login-button').click(function (e) {
     netid = $('input#netid').val();
+    $('input, button').blur();
 
     // Don't actually submit the form
     e.preventDefault();

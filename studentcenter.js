@@ -68,10 +68,21 @@ module.exports = (function () {
           // This ignores the title rows
           if (pieces.length == 6) {
             var course = {};
+
+            // Regex to remove string inside parens
             var inside_parens = /\(([^)]+)\)/;
+
             // Create an object that contains information about the course
             course.type = pieces[1].split(' ')[0];
-            course.when = pieces[4];
+
+            // Split course time info into pieces
+            var when        = pieces[4].split(' ');
+            var days_string = when[0];
+            course.days     = days_string.match(/.{1,2}/g);
+            course.start    = when[1];
+            course.end      = when[3];
+
+            // Location
             course.where = pieces[5];
             course.id = pieces[0].split('-')[0];
             course.number = inside_parens.exec(pieces[1])[1] + '-'
@@ -88,7 +99,3 @@ module.exports = (function () {
   return StudentCenter;
 
 })();
-
-
-
-
