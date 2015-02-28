@@ -1,5 +1,4 @@
 var ipc = require('ipc');
-var used_colors = [];
 
 $(document).ready(function () {
   // Meta actions (close, minimize)
@@ -23,25 +22,46 @@ $(document).ready(function () {
     $('table#wcalendar').append('</tr>');
   }
 
+  // Insert labels for days of the week
+  $('div#module-container')
+    .append('<div id="day-label-container"></div>');
+
+  $('div#module-container div#day-label-container')
+    .append('<div class="day-label1">Monday</div>')
+    .append('<div class="day-label1">Tuesday</div>')
+    .append('<div class="day-label1">Wednesday</div>')
+    .append('<div class="day-label1">Thursday</div>')
+    .append('<div class="day-label2">Friday</div>')
+    .append('<div class="day-label2">Saturday</div>')
+    .append('<div class="day-label2">Sunday</div>');
+
   get_courses(function (data) {
     // Fill calendar
     for (var i = 0; i < data.length; i++) {
       // Add event for each day
-      var bg_color = random_color();
+      var course_seed = parseInt(data[i].number.split('-')[0]);
+      var bg_color = random_color(course_seed);
+      var border_color = darker_color(bg_color);
+
       for (var c = 0; c < data[i].days.length; c++) {
         // Calculate dependent CSS properties
-        var loc_top  = Math.floor((intify_time(data[i].start) - 800) / 1.615);
+        var loc_top  = time_to_pos(data[i].start);
         var loc_left = (num_of_day(data[i].days[c]) * 118) + 61;
-        var height   = (intify_time(data[i].end) - intify_time(data[i].start)) / 1.615;
+        var height   = time_to_pos(data[i].end) - time_to_pos(data[i].start);
 
         $('div#module-container')
           .append('<div class="wcalendar-event" id="' + data[i].number + c + '"></div>');
 
         $('div#' + data[i].number + c)
           .last()
-          .text(data[i].id)
+          .html(
+            '<span class="title">' + data[i].id + '</span><br />' +
+            '<span class="time">' + data[i].start.toLowerCase() + ' &#8211; ' + data[i].end.toLowerCase() + '</span><br />' +
+            '<span class="place">' + two_words_num(data[i].where) + '</span>'
+          )
           .css({
             backgroundColor: bg_color,
+            border: '1px solid ' + border_color,
             top: loc_top + 'px',
             left: loc_left + 'px',
             height: height + 'px'
@@ -50,6 +70,20 @@ $(document).ready(function () {
     }
   });
 });
+
+/****************************** Generic Functions *****************************/
+
+/**
+ * Searches for two words followed by a number in a string, e.g. Uris Hall G01.
+ * Requires: [String] str - The string to process
+ * Returns: [String] The first match in the string
+ */
+var two_words_num = function (str) {
+    var r = /[a-z]+( )[a-z]+( )[a-z]?[0-9]{1,3}/i;
+    var first_match = str.match(r)[0];
+    first_match.replace('Hll', 'Hall');
+    return first_match;
+}
 
 /**
  * Makes a GET request to fetch the student's courses
@@ -67,20 +101,32 @@ var get_courses = function(callback) {
 
 /**
  * Generates a random pastel color
+ * Requires: [int] seed - A seed for the number generation
  * Returns: [String] The hex code (including #) of a pleasing color
  */
-var random_color = function () {
-  var r = (Math.round(Math.random()* 127) + 127).toString(16);
-  var g = (Math.round(Math.random()* 127) + 127).toString(16);
-  var b = (Math.round(Math.random()* 127) + 127).toString(16);
-  var ans = r + g + b;
-  while (used_colors.indexOf(ans) >= 0) {
-    r = (Math.round(Math.random()* 127) + 127).toString(16);
-    g = (Math.round(Math.random()* 127) + 127).toString(16);
-    b = (Math.round(Math.random()* 127) + 127).toString(16);
-    ans = r + g + b;
-  }
+var random_color = function (seed) {
+  var scale = 127;   // defaults 127
+  var offset = 127;
+
+  var r = (Math.round(random_seed(seed / 1) * scale) + offset).toString(16);
+  var g = (Math.round(random_seed(seed / 2) * scale) + offset).toString(16);
+  var b = (Math.round(random_seed(seed / 4) * scale) + offset).toString(16);
+
   return '#' + r + g + b;
+}
+
+/**
+ * Generates a darker version of the given hex color
+ * Requires: [String] og - The original color in hex
+ * Returns: [String] The hex code (including #) of a darker color
+ */
+var darker_color = function (og) {
+  var offset = 40;
+  var r = parseInt(og.substr(1, 2), 16) - offset;
+  var g = parseInt(og.substr(3, 2), 16) - offset;
+  var b = parseInt(og.substr(5, 2), 16) - offset;
+
+  return '#' + r.toString(16) + g.toString(16) + b.toString(16);
 }
 
 /**
@@ -94,11 +140,13 @@ var num_of_day = function (day) {
 }
 
 /**
- * Given a time as string, converts the string into an integer format HHMM
+ * Given a time as a string, converts the string into an integer representing
+ *   where it should be on the page. Multiplies the hour by 60 and adds that to
+ *   the minute value
  * Requires: [String] time - The time to convert of format HH:MM[am|pm]
  * Returns: [int] The intified time
  */
-var intify_time = function (time) {
+var time_to_pos = function (time) {
   var pieces = time.split(':');
   var hour = parseInt(pieces[0]);
   var min = parseInt(pieces[1].substr(0, 2));
@@ -107,7 +155,11 @@ var intify_time = function (time) {
     hour += 12;
   }
 
-  return (hour * 100) + min;
+  // Calendar starts at 8am
+  hour -= 8;
+  hour *= 60;
+
+  return Math.floor(hour + min);
 }
 
 /**
@@ -142,4 +194,14 @@ var stringify_time = function (time, ampm) {
   }
   var stringified = hour + '<span class="ampm">' + ap + '</span>';
   return stringified;
+}
+
+/**
+ * Generates a random number given a seed
+ * Requires: [int] seed - The seed
+ * Returns: [int] A random decimal between 0 and 1
+ */
+var random_seed = function(seed) {
+    var x = Math.sin(seed) * 10000;
+    return x - Math.floor(x);
 }

@@ -85,6 +85,9 @@ table#wcalendar td, th {
   height: 60px;
   border-right: 1px solid #DDDDDD;
 }
+table#wcalendar td {
+  width: 118px;
+}
 table#wcalendar th {
   border-top-left-radius: 12px;
   border-bottom-left-radius: 12px;
@@ -98,7 +101,38 @@ table#wcalendar th {
 table#wcalendar th span.ampm {
   font-size: 16px;
 }
-div.wcalendar-event {
+div#day-label-container {
+  position: fixed;
+  bottom: 17px;
+  left: 81px;
+  z-index: 999;
+}
+div.day-label1 {
+  display: inline-block;
+  background-color: rgba(255, 255, 255, 0.65);
+  border-right: 1px solid #DDDDDD;
+  padding-right: 5px;
   width: 118px;
+  text-align: right;
+}
+div.day-label2 {
+  display: inline-block;
+  background-color: rgba(255, 255, 255, 0.65);
+  border-right: 1px solid #DDDDDD;
+  padding-right: 5px;
+  width: 119px;
+  text-align: right;
+}
+div.wcalendar-event {
+  padding: 3px 0px 0px 0px;
+  border-radius: 5px;
+  width: 117px;
   position: absolute;
+  overflow: hidden;
+}
+div.wcalendar-event span.time {
+  font-size: 12px;
+}
+div.wcalendar-event span.place {
+  font-size: 12px;
 }
