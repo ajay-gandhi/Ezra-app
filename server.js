@@ -11,15 +11,24 @@ server.use(bodyParser.urlencoded({
   extended: true
 }));
 
-// Requesting user's courses
+// Initialize the headless browser to speedup login
+server.get('/init', function (req, res) {
+  var sc = new StudentCenter();
+  sc
+    .init()
+    .then(function (sc_new) {
+      student = sc_new;
+      res.send('true');
+    });
+});
+
+// Login user
 server.post('/login', function (req, res) {
   // Get the username and pw from the request
   var netid    = req.body.netid;
   var password = req.body.password;
 
-  var sc = new StudentCenter();
-
-  sc
+  student
     .login(netid, password)
     .then(function (sc_new) {
       // Store the student's headless browser locally

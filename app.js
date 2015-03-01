@@ -5,7 +5,8 @@ var spawn  = require('child_process').spawn,
 // Start the app itself
 var app           = require('app'),
     BrowserWindow = require('browser-window'),
-    ipc           = require('ipc');
+    ipc           = require('ipc'),
+    request       = require('request');
 
 // Main GUI window
 var main_window = null;
@@ -29,6 +30,16 @@ app.on('ready', function () {
   // load main page
   main_window.loadUrl('file://' + __dirname + '/html/login.html');
 
+  // Make a request to the headless browser to init it after a second
+  setTimeout(function () {
+    request('http://127.0.0.1:3005/init', function (error, response, body) {
+      if (body !== 'true') {
+        console.error('Error initializing browser:');
+        console.log(error);
+      }
+    });
+  }, 1000);
+
   main_window.on('close', function () {
     server.kill('SIGTERM');
   });
@@ -36,13 +47,13 @@ app.on('ready', function () {
 
 // Events for closing, minimizing window
 ipc.on('close-window-event', function(event, arg) {
-  if (arg == 'true') {
+  if (arg === 'true') {
     main_window.close();
   }
 });
 
 ipc.on('minimize-window-event', function(event, arg) {
-  if (arg == 'true') {
+  if (arg === 'true') {
     main_window.minimize();
   }
 });
@@ -56,5 +67,3 @@ ipc.on('login-successful', function (event, arg) {
   // Load new page
   main_window.loadUrl('file://' + __dirname + '/html/index.html');
 });
-
-
