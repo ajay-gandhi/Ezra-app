@@ -1,7 +1,10 @@
 var Zombie = require('zombie'),
     Promise = require('es6-promise').Promise;
 
-var student_center_url = 'http://studentcenter.cornell.edu';
+var urls = {
+  main: 'http://studentcenter.cornell.edu',
+  grades: 'https://selfservice.adminapps.cornell.edu/psc/cuselfservice/EMPLOYEE/HRMS/c/SA_LEARNER_SERVICES.SSR_SSENRL_GRADE.GBL'
+}
 
 module.exports = (function () {
 
@@ -20,7 +23,7 @@ module.exports = (function () {
     return new Promise(function (resolve, rejeect) {
       // Visit Student Center
       browser
-        .visit(student_center_url)
+        .visit(urls.main)
         .then(function () {
           // Wait for redirects
           return browser.wait();
@@ -62,6 +65,12 @@ module.exports = (function () {
     });
   }
 
+  /**
+   * Fetches the student's courses for the current semester, returning an array
+   *   of objects, each representing a class. Each object contains the course
+   *   title, time, and location
+   * Returns: [Array] An array of course objects
+   */
   StudentCenter.prototype.getCourses = function () {
     var browser = this.browser;
 
@@ -107,6 +116,45 @@ module.exports = (function () {
       }
 
       resolve(courses);
+    });
+  }
+
+  /**
+   * Fetches the semesters for which a student's grades are available
+   * Returns: [Array] An array of strings of the format 'Spring 2015'
+   */
+  StudentCenter.prototype.getGradeSemesters = function () {
+    var browser = this.browser;
+
+    return new Promise(function (resolve, reject) {
+      // Visit grades page
+      browser
+        .visit(urls.grades)
+        .then(function () {
+          return browser.wait();
+        })
+        .then(function () {
+
+          var semesters_table = browser.query("table[id^=SSR_DUMMY_RECV1]");
+          var rows = semesters_table.tBodies[0].children;
+
+          // Iterate over children, ignoring elements that are not table rows
+          // and first two rows
+          var semesters = [];
+          for (var i = 2; i < rows.length; i++) {
+
+            var child = rows[i];
+            if (child.tagName.toLowerCase() === 'tr') {
+              semesters.push(child.children[1].textContent.trim());
+            }
+          }
+
+          // Go back to student center main page
+          browser.visit(urls.main);
+
+          resolve(semesters);
+
+        });
     });
   }
 
