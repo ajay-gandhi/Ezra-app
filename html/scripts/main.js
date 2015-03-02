@@ -27,13 +27,13 @@ $(document).ready(function () {
     .append('<div id="day-label-container"></div>');
 
   $('div#module-container div#day-label-container')
-    .append('<div class="day-label1">Monday</div>')
-    .append('<div class="day-label1">Tuesday</div>')
-    .append('<div class="day-label1">Wednesday</div>')
-    .append('<div class="day-label1">Thursday</div>')
-    .append('<div class="day-label2">Friday</div>')
-    .append('<div class="day-label2">Saturday</div>')
-    .append('<div class="day-label2">Sunday</div>');
+    .append('<div class="day-label1">Mon</div>')
+    .append('<div class="day-label1">Tue</div>')
+    .append('<div class="day-label1">Wed</div>')
+    .append('<div class="day-label1">Thu</div>')
+    .append('<div class="day-label2">Fr</div>')
+    .append('<div class="day-label2">Sat</div>')
+    .append('<div class="day-label2">Sun</div>');
 
   get_courses(function (data) {
     // Fill calendar

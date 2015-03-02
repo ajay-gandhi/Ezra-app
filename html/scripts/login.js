@@ -64,7 +64,7 @@ $(document).ready(function () {
  */
 var login_result = function (successful, callback) {
   var login_result_delay = 1000,
-      login_animation_duration = 500;
+      login_animation_duration = 200;
 
   $('div#login-cover')
     .css({
