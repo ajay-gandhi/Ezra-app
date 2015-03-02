@@ -62,7 +62,12 @@ ipc.on('minimize-window-event', function(event, arg) {
 ipc.on('login-successful', function (event, arg) {
   // Resize and center
   main_window.setSize(930, 630);
-  main_window.center();
+
+  // Find current position, subtract 1/2 new size
+  var cur_pos = main_window.getPosition();
+  var new_x = cur_pos[0] - 465 + 190;
+  var new_y = cur_pos[1] - 315 + 170;
+  main_window.setPosition(new_x, new_y);
 
   // Load new page
   main_window.loadUrl('file://' + __dirname + '/html/index.html');
