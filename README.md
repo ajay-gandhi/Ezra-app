@@ -27,3 +27,8 @@ You're ready! Run the app by executing:
     atom-shell .
 
 (Assuming atom-shell is installed as `atom-shell`.)
+
+## Contributing
+
+If you feel like adding something, put together some well-documented code and
+submit a pull-request!
