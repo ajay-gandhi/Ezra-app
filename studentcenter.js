@@ -131,9 +131,6 @@ module.exports = (function () {
       browser
         .visit(urls.grades)
         .then(function () {
-          return browser.wait();
-        })
-        .then(function () {
 
           var semesters_table = browser.query("table[id^=SSR_DUMMY_RECV1]");
           var rows = semesters_table.tBodies[0].children;
@@ -153,6 +150,87 @@ module.exports = (function () {
           browser.visit(urls.main);
 
           resolve(semesters);
+
+        });
+    });
+  }
+
+  /**
+   * Fetches the student's grades for a given semester
+   * Returns: [Array] An array of objects containing grading data
+   *   Each object followed the following format:
+   *     number:  course number (DEP XXXX)
+   *     name:    name of the course
+   *     credits: number of credits
+   *     grading: graded or pass/fail
+   *     letter:  letter grade
+   *     gpa:     amount it contributes to your GPA; calculated by weighting
+   *                letter grade by number of credits
+   * 
+   */
+  StudentCenter.prototype.getGrades = function (semester) {
+    var browser = this.browser;
+
+    return new Promise(function (resolve, reject) {
+      // Visit grades page
+      browser
+        .visit(urls.grades)
+        .then(function () {
+
+          var semesters_table = browser.query("table[id^=SSR_DUMMY_RECV1]");
+          var rows = semesters_table.tBodies[0].children;
+
+          // Iterate over children, ignoring elements that are not table rows
+          // and first two rows
+          var semesters = [];
+          for (var i = 2; i < rows.length; i++) {
+
+            var child = rows[i];
+            if (child.tagName.toLowerCase() === 'tr') {
+              if (child.children[1].textContent.trim() == semester) {
+                // Click the proper semester radio button
+                child.children[0].children[0].click();
+              }
+            }
+          }
+
+          // Simulate running a JS function on the page that does all this stuff
+          // below, no idea why it's necessary or what it does. It's something
+          // from PeopleSoft
+          browser.document.forms[0].elements['ICAction'].value   = 'DERIVED_SSS_SCT_SSR_PB_GO';
+          browser.document.forms[0].elements['ICXPos'].value     = '100';
+          browser.document.forms[0].elements['ICYPos'].value     = '100';
+          browser.document.forms[0].elements['ICResubmit'].value = '0';
+          browser.document.forms[0].submit();
+          return browser.wait();
+        })
+        .then(function () {
+
+          var grades_table = browser.query("table.PSLEVEL1GRID");
+          var rows = grades_table.tBodies[0].children;
+
+          // Iterate over children, ignoring elements that are not table rows
+          // and first row
+          var grades = [];
+          for (var i = 1; i < rows.length; i++) {
+
+            var child = rows[i];
+            if (child.tagName.toLowerCase() === 'tr') {
+              grades.push({
+                number:  child.children[0].textContent.trim(),
+                name:    child.children[1].textContent.trim(),
+                credits: child.children[2].textContent.trim(),
+                grading: child.children[3].textContent.trim(),
+                letter:  child.children[4].textContent.trim(),
+                gpa:     child.children[5].textContent.trim()
+              });
+            }
+          }
+
+          // Go back to student center main page
+          browser.visit(urls.main);
+
+          resolve(grades);
 
         });
     });
