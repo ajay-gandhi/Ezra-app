@@ -18,7 +18,28 @@ line:
 
     cd Ezra-app/
 
-Install any Node.js dependencies by running:
+The next step takes care of installing Node.js dependencies. One of these,
+Zombie.js (the headless browser) fails when installed with APM. Thus, although
+it is included in the `package.json` file, you must remove it before installing
+packages.
+
+Remove the specified line in `package.json`:
+
+    "dependencies": {
+      "body-parser": "^1.12.0",
+      "es6-promise": "^2.0.1",
+      "express": "^4.12.0",
+      "request": "^2.53.0",      // Remove the comma
+      "zombie": "^2.5.1"         // Delete this line
+    }
+
+Don't forget to remove the comma in the previous line.
+
+Zombie.js is still required for Ezra, so install it using `npm`:
+
+    npm install zombie
+
+Now, install the rest of the Node.js dependencies by running:
 
     apm install
 
