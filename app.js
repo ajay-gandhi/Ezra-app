@@ -30,7 +30,8 @@ app.on('ready', function () {
   // load main page
   main_window.loadUrl('file://' + __dirname + '/html/login.html');
 
-  // Make a request to the headless browser to init it after a second
+  // Make a request to the headless browser to init it
+  // Give it 2 seconds to start up
   setTimeout(function () {
     request('http://127.0.0.1:3005/init', function (error, response, body) {
       if (body !== 'true') {
@@ -38,7 +39,7 @@ app.on('ready', function () {
         console.log(error);
       }
     });
-  }, 1000);
+  }, 2000);
 
   main_window.on('close', function () {
     server.kill('SIGTERM');
