@@ -2,13 +2,16 @@
 <head>
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css">
   <link rel="stylesheet" type="text/css" href="./css/main.css" />
+  <link rel="stylesheet" type="text/css" href="./css/header.css" />
   <link rel="stylesheet" type="text/css" href="./css/layout.css" />
   
   <title>Ezra</title>
   <script type="text/javascript">
     window.$ = window.jQuery = require('./scripts/jquery.min.js');
   </script>
+  <script type="text/javascript" src="./scripts/header.js"></script>
   <script type="text/javascript" src="./scripts/main.js"></script>
+  <script type="text/javascript" src="./scripts/schedule.js"></script>
 </head>
 <body>
   <div id="main-wrapper">
@@ -16,8 +19,33 @@
       <header>
         <h1>Ezra</h1>
       </header>
+      <div id="navigation">
+        <div class="nav-item" id="schedule">My Schedule</div>
+        <div class="nav-item">My Grades</div>
+        <div class="nav-item">Dining Menus</div>
+        <div class="nav-item">4th Item</div>
+        <div class="nav-item">5th Item</div>
+      </div>
       <div id="module-container">
-        <table id="wcalendar"></table>
+        <div id="module-group">
+          <div class="module" id="schedule-wrapper">
+            <div id="schedule">
+              <table id="wcalendar"></table>
+            </div>
+          </div>
+          <div class="module">
+            second item
+          </div>
+          <div class="module">
+            third item
+          </div>
+          <div class="module">
+            fourth item
+          </div>
+          <div class="module">
+            fifth item
+          </div>
+        </div>
       </div>
 
       <button type="button" id="close" class="btn btn-danger meta">&times;</button>

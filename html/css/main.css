@@ -44,10 +44,27 @@ div#main {
 }
 
 div#module-container {
-  position: relative;
+  position: absolute;
+  left: 5px;
+  top: 50px;
   width: 890px;
   height: 550px;
-  margin: 50px 0px 0px -10px;
+  overflow: hidden;
+}
+div#module-group {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+}
+div.module {
+  position: absolute;
+  width: 890px;
+  height: auto;
+  overflow: auto;
+}
+div#schedule {
+  position: relative;
+  height: 550px;
   overflow: auto;
 }
 
@@ -102,10 +119,11 @@ table#wcalendar th span.ampm {
   font-size: 16px;
 }
 div#day-label-container {
-  position: fixed;
-  bottom: 17px;
-  left: 81px;
+  position: absolute;
+  bottom: 0px;
+  right: 0px;
   z-index: 999;
+  width: 830px;
   font-size: 15px;
   color: #333;
 }
