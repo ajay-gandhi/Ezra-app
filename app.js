@@ -2,6 +2,11 @@
 var spawn  = require('child_process').spawn,
     server = spawn('node', ['server.js']);
 
+// Log output from the server
+server.stdout.on('data', function (chunk) {
+  console.log('Server output: ', chunk.toString());
+});
+
 // Start the app itself
 var app           = require('app'),
     BrowserWindow = require('browser-window'),
