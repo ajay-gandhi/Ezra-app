@@ -1,4 +1,6 @@
-// Arranges the navigation menu
+/**
+ * Handles the nav menu
+ */
 
 $(document).ready(function () {
   // Hide and display navigation bar
