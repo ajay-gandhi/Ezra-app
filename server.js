@@ -50,6 +50,15 @@ server.get('/courses', function (req, res) {
     });
 });
 
+// Serve the student's personal information and student id image
+server.get('/information', function (req, res) {
+  student
+    .getInformation()
+    .then(function (info) {
+      res.send(info);
+    });
+});
+
 // For testing
 server.get('/hello', function (req, res) {
   res.send('hello wordl');
@@ -58,4 +67,6 @@ server.get('/hello', function (req, res) {
 // Start the server
 var server_port = 3005;
 var server_ip_address = '127.0.0.1';
-server.listen(server_port, server_ip_address);
+server.listen(server_port, server_ip_address, function () {
+  console.log('Ready');
+});
