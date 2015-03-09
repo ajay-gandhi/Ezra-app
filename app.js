@@ -4,7 +4,7 @@ var spawn  = require('child_process').spawn,
 
 // Log output from the server
 server.stdout.on('data', function (chunk) {
-  console.log('Server output: ', chunk.toString());
+  console.log('Server output: ', chunk.toString().trim());
 });
 
 // Start the app itself
