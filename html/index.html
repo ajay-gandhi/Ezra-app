@@ -1,20 +1,21 @@
 <html>
 <head>
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css">
-  <link rel="stylesheet" type="text/css" href="./css/main.css" />
-  <link rel="stylesheet" type="text/css" href="./css/schedule.css" />
   <link rel="stylesheet" type="text/css" href="./css/header.css" />
   <link rel="stylesheet" type="text/css" href="./css/layout.css" />
+  <link rel="stylesheet" type="text/css" href="./css/main.css" />
+  <link rel="stylesheet" type="text/css" href="./css/schedule.css" />
   <link rel="stylesheet" type="text/css" href="./css/dining.css">
-  
+
   <title>Ezra</title>
   <script type="text/javascript">
     window.$ = window.jQuery = require('./scripts/jquery.min.js');
   </script>
-  <script type="text/javascript" src="./scripts/header.js"></script>
   <script type="text/javascript" src="./scripts/main.js"></script>
+  <script type="text/javascript" src="./scripts/header.js"></script>
   <script type="text/javascript" src="./scripts/schedule.js"></script>
   <script type="text/javascript" src="./scripts/dining.js"></script>
+  <script type="text/javascript" src="./scripts/information.js"></script>
 </head>
 <body>
   <div id="main-wrapper">
@@ -26,8 +27,6 @@
         <div class="nav-item" id="schedule-button">My Schedule</div>
         <div class="nav-item" id="information-button">My Information</div>
         <div class="nav-item">Dining Hours</div>
-        <div class="nav-item">4th item</div>
-        <div class="nav-item">5th Item</div>
       </div>
       <div id="module-container">
         <div id="module-group">
@@ -36,9 +35,7 @@
               <table id="wcalendar"></table>
             </div>
           </div>
-          <div class="module">
-            second item
-          </div>
+          <div class="module" id="information"></div>
           <div class="module">
             <div class="dining-calendar-container">
               <div class="dining-calendar-column">
