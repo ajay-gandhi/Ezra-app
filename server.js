@@ -1,15 +1,8 @@
 var express       = require('express'),
-    bodyParser    = require('body-parser'),
     StudentCenter = require('./studentcenter.js');
 
 var server = express();
 var student;
-
-// Enable POST requests
-server.use(bodyParser.json());
-server.use(bodyParser.urlencoded({
-  extended: true
-}));
 
 // Initialize the headless browser to speedup login
 server.get('/init', function (req, res) {
@@ -23,10 +16,10 @@ server.get('/init', function (req, res) {
 });
 
 // Login user
-server.post('/login', function (req, res) {
+server.get('/login', function (req, res) {
   // Get the username and pw from the request
-  var netid    = req.body.netid;
-  var password = req.body.password;
+  var netid    = req.query.netid;
+  var password = req.query.password;
 
   student
     .login(netid, password)

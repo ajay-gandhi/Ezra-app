@@ -24,7 +24,7 @@ $(document).ready(function () {
     // Ajax request to server
     $.ajax({
       url: 'http://127.0.0.1:3005/login',
-      method: 'POST',
+      method: 'GET',
       data: {
         netid: netid,
         password: $('input#password').val()
