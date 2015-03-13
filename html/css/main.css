@@ -75,18 +75,30 @@ button {
 
 button.meta {
   position: fixed;
-  top: 28px;
-  z-index: 999;
-  width: 20px;
-  height: 20px;
+  top: 34px;
+  width: 13px;
+  height: 13px;
   padding: 0px 2px 2px 2px;
   margin: 0px;
-  font-size: 20px;
+  font-size: 12px;
+  font-weight: bold;
   line-height: 10px;
+  border-radius: 100px;
 }
 button#close {
-  left: 28px;
+  left: 26px;
+  color: #ff4342;
+  background-color: #ff4342;;
 }
+button#close:hover {
+  color: #830000;
+}
+
 button#minimize {
-  left: 58px;
+  left: 45px;
+  color: #fab903;
+  background-color: #fab903;
+}
+button#minimize:hover {
+  color: #a35403;
 }
