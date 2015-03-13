@@ -1,4 +1,4 @@
-.dining-calendar-container {
+#dining-calendar-container {
   width: 1250px;
   height: 100%;
   white-space: nowrap;
@@ -8,6 +8,12 @@
   height: 100%;
   width: 250px;
   display: inline-block;
+  margin: 0px;
+  padding: 0px;
+}
+
+.dining-calendar-column:last-child {
+    margin-right: 0px;
 }
 
 .dining-calendar-column iframe {

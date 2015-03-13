@@ -82,21 +82,38 @@ div#login-result {
   border-radius: 20px;
 }
 
-/* Meta Buttons */
+/* Meta buttons */
+button {
+  -webkit-app-region: no-drag;
+}
+
 button.meta {
   position: fixed;
-  top: 40px;
-  z-index: 99;
-  width: 20px;
-  height: 20px;
+  top: 32px;
+  width: 13px;
+  height: 13px;
   padding: 0px 2px 2px 2px;
   margin: 0px;
-  font-size: 20px;
+  font-size: 12px;
+  font-weight: bold;
   line-height: 10px;
+  border-radius: 100px;
 }
 button#close {
-  left: 40px;
+  left: 31px;
+  color: #ff4342;
+  background-color: #ff4342;;
 }
+button#close:hover {
+  color: #830000;
+}
+
 button#minimize {
-  left: 70px;
+  left: 50px;
+  color: #fab903;
+  background-color: #fab903;
 }
+button#minimize:hover {
+  color: #a35403;
+}
+
