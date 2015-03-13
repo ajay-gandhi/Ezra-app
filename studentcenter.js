@@ -1,7 +1,6 @@
 var Zombie  = require('zombie'),
     Promise = require('es6-promise').Promise,
-    request = require('request'),
-    BufferList = require('bufferlist').BufferList;
+    request = require('request');
 
 var urls = {
   main: 'http://studentcenter.cornell.edu',
