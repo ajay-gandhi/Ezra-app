@@ -6,11 +6,9 @@ if (date.getMonth() + 1 < 10) {
   today += (date.getMonth() + 1);
 }
 today += date.getDate();
-console.log(today);
 
 $(document).ready(function() {
+  var src = $('iframe').attr('src');
   $('iframe')
-    .attr('src', $('iframe').attr('src') + '&mode=DAY&dates=' + today + '/' + today);
-  // $('iframe').contents().find('head')
-  //   .append($("<style type='text/css'> .my-class { display: none; } </style>"));
+    .attr('src', src + '&mode=DAY&dates=' + today + '/' + today);
 });
