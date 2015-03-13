@@ -77,7 +77,7 @@ $(document).ready(function () {
 var two_words_num = function (str) {
   var r = /[a-z]+( )[a-z]+( )[a-z]?[0-9]{1,3}/i;
   var first_match = str.match(r)[0];
-  first_match.replace('Hll', 'Hall');
+  first_match = first_match.replace('Hll', 'Hall');
   return first_match;
 }
 

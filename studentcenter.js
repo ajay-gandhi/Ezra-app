@@ -1,9 +1,12 @@
-var Zombie = require('zombie'),
-    Promise = require('es6-promise').Promise;
+var Zombie  = require('zombie'),
+    Promise = require('es6-promise').Promise,
+    request = require('request'),
+    BufferList = require('bufferlist').BufferList;
 
 var urls = {
   main: 'http://studentcenter.cornell.edu',
-  grades: 'https://selfservice.adminapps.cornell.edu/psc/cuselfservice/EMPLOYEE/HRMS/c/SA_LEARNER_SERVICES.SSR_SSENRL_GRADE.GBL'
+  grades: 'https://selfservice.adminapps.cornell.edu/psc/cuselfservice/EMPLOYEE/HRMS/c/SA_LEARNER_SERVICES.SSR_SSENRL_GRADE.GBL',
+  demographics: 'https://selfservice.adminapps.cornell.edu/psc/cuselfservice/EMPLOYEE/HRMS/c/CC_PORTFOLIO.SS_CC_DEMOG_DATA.GBL'
 }
 
 module.exports = (function () {
@@ -177,7 +180,7 @@ module.exports = (function () {
         .visit(urls.grades)
         .then(function () {
 
-          var semesters_table = browser.query("table[id^=SSR_DUMMY_RECV1]");
+          var semesters_table = browser.query('table[id^=SSR_DUMMY_RECV1]');
           var rows = semesters_table.tBodies[0].children;
 
           // Iterate over children, ignoring elements that are not table rows
@@ -206,7 +209,7 @@ module.exports = (function () {
         })
         .then(function () {
 
-          var grades_table = browser.query("table.PSLEVEL1GRID");
+          var grades_table = browser.query('table.PSLEVEL1GRID');
           var rows = grades_table.tBodies[0].children;
 
           // Iterate over children, ignoring elements that are not table rows
@@ -232,6 +235,85 @@ module.exports = (function () {
 
           resolve(grades);
 
+        });
+    });
+  }
+
+  /**
+   * TODO
+   *
+   * Returns an object containing information about the student, e.g. advisor
+   *   and school address.
+   * Returns: [Promise] An object containing the student's personal information:
+   *   - Advisor
+   *   - Assigned Address
+   *   - Bursar charges
+   */
+  StudentCenter.prototype.getInformation = function () {
+    var browser = this.browser;
+
+    return new Promise(function (resolve, reject) {
+      var info = {};
+
+      // Get bursar status
+      var bursar = browser.query('span.SSSMSGINFOTEXT').textContent.trim();
+      info.bursar = bursar;
+
+      // Get advisor
+      var advisor_tables = browser.queryAll('table.PABACKGROUNDINVISIBLEWBO');
+      var advisor;
+      for (var i = 0; i < advisor_tables.length; i++) {
+        if (advisor_tables[i].textContent.trim().indexOf('Program Advisor') > -1) {
+          advisor = advisor_tables[i];
+        }
+      }
+      info.advisor = advisor.children[0].children[1].textContent.trim();
+
+      // Get student ID number and image
+      browser
+        .visit(urls.demographics)
+        .then(function () {
+
+          // Student ID
+          var id_tables = browser.queryAll('table');
+          var id_tbl, student_id;
+
+          for (var i = 0; i < id_tables.length; i++) {
+            if (id_tables[i].textContent.trim().indexOf('Gender') > -1) {
+              id_tbl = id_tables[i];
+            }
+          }
+
+          student_id = id_tbl.tBodies[0].children[2].textContent.trim();
+          info.student_id = student_id;
+
+          // Student image
+          var images = browser.queryAll('img');
+          var image_url;
+
+          for (var i = 0; i < images.length; i++) {
+            if (images[i].src.indexOf('/cs/cuselfservice/cache/EMPL_PHOTO_') > -1) {
+              image_url = images[i].src;
+            }
+          }
+
+          // Now get the image and send it base64-encoded
+          // See https://gist.github.com/hackable/1294667
+          request({
+            uri: image_url,
+            encoding: 'binary'
+          }, function (error, response, body) {
+            if (!error && response.statusCode == 200) {
+
+              var data_uri_prefix = 'data:' + response.headers['content-type'] + ';base64,';
+
+              // Decode the binary image
+              var image = new Buffer(body, 'binary').toString('base64');
+
+              info.image = data_uri_prefix + image;
+              resolve(info);
+            }
+          }); 
         });
     });
   }
