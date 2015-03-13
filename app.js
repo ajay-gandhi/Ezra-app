@@ -52,20 +52,20 @@ app.on('ready', function () {
 });
 
 // Events for closing, minimizing window
-ipc.on('close-window-event', function(event, arg) {
+ipc.on('close-window', function (e, arg) {
   if (arg === 'true') {
     main_window.close();
   }
 });
 
-ipc.on('minimize-window-event', function(event, arg) {
+ipc.on('minimize-window', function (e, arg) {
   if (arg === 'true') {
     main_window.minimize();
   }
 });
 
 // Login was successful
-ipc.on('login-successful', function (event, arg) {
+ipc.on('login-successful', function (e, arg) {
   // Resize and center
   main_window.setSize(930, 630);
 

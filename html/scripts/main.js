@@ -3,10 +3,10 @@ var ipc = require('ipc');
 $(document).ready(function () {
   // Meta actions (close, minimize)
   $('button#close').click(function () {
-    ipc.send('close-window-event', 'true');
+    ipc.send('close-window', 'true');
   });
   $('button#minimize').click(function () {
-    ipc.send('minimize-window-event', 'true');
+    ipc.send('minimize-window', 'true');
   });
 
   // Move the modules into a row
