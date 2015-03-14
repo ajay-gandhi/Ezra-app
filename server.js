@@ -1,5 +1,9 @@
+'use strict';
+/* global require, console */
 var express       = require('express'),
-    StudentCenter = require('./studentcenter.js');
+    StudentCenter = require('./studentcenter.js'),
+    rp            = require('request-promise');
+
 
 var server = express();
 var student;
@@ -54,7 +58,17 @@ server.get('/information', function (req, res) {
 
 // For testing
 server.get('/hello', function (req, res) {
-  res.send('hello wordl');
+  res.send('hello wordl'); // lol ajay. BRUH.
+});
+
+server.get('/menus', function (req, res) {
+  console.log('got the thing')
+  rp('http://redapi-tious.rhcloud.com/dining/menu/ALL/ALL/LOCATIONS')
+  .then(function (info) {
+    console.log('sent the thing')
+    console.log(info)
+    res.send(info);
+  });
 });
 
 // Start the server
