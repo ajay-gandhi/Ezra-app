@@ -7,22 +7,18 @@ var express       = require('express'),
     rp            = require('request-promise');
 
 var server = express();
-var student;
 var settings_file = './settings.json';
 
 // Keep netid and pw for keychain possibly
 var netid, password;
 
 // Initialize the headless browser to speedup login
-server.get('/init', function (req, res) {
-  var sc = new StudentCenter();
-  sc
-    .init()
-    .then(function (sc_new) {
-      student = sc_new;
-      res.send('true');
-    });
-});
+var student = new StudentCenter();
+student
+  .init()
+  .then(function (sc_new) {
+    student = sc_new;
+  });
 
 // Login user
 server.get('/login', function (req, res) {
@@ -85,7 +81,6 @@ server.get('/remember', function (req, res) {
       });
     }
   });
-
 });
 
 // For testing

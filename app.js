@@ -54,14 +54,6 @@ app.on('ready', function () {
     });
   });
 
-  // Make a request to the headless browser to init it
-  request('http://127.0.0.1:3005/init', function (error, response, body) {
-    if (body !== 'true') {
-      console.error('Error initializing browser:');
-      console.log(error);
-    }
-  });
-
   main_window.on('close', function () {
     server.kill('SIGTERM');
   });
