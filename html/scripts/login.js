@@ -40,6 +40,7 @@ $(document).ready(function () {
       if (data.toString() === 'false') {
         // Login failed
         login_result(false, function () {
+          $('input#netid').focus();
           $('button#login-button').prop('disabled', false);
           $('button#login-button').text('Login');
         });
