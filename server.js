@@ -1,8 +1,14 @@
 var express       = require('express'),
+    keychain      = require('xkeychain'),
+    jf            = require('jsonfile'),
     StudentCenter = require('./studentcenter.js');
 
 var server = express();
 var student;
+var settings_file = './settings.json';
+
+// Keep netid and pw for keychain possibly
+var netid, password;
 
 // Initialize the headless browser to speedup login
 server.get('/init', function (req, res) {
@@ -18,8 +24,8 @@ server.get('/init', function (req, res) {
 // Login user
 server.get('/login', function (req, res) {
   // Get the username and pw from the request
-  var netid    = req.query.netid;
-  var password = req.query.password;
+  netid    = req.query.netid;
+  password = req.query.password;
 
   student
     .login(netid, password)
@@ -50,6 +56,33 @@ server.get('/information', function (req, res) {
     .then(function (info) {
       res.send(info);
     });
+});
+
+// Save the username/pw
+server.get('/remember', function (req, res) {
+
+  // Store the username/pw in the keychain
+  keychain.setPassword({ account: netid, service: 'Ezra', password: password }, function(err) {
+    if (err) {
+      console.log(err);
+    } else {
+      console.log('Password saved');
+
+      // Write the netid to settings file
+      jf.readFile(settings_file, function(err, obj) {
+        // Add prop to existing settings
+        obj.netid = netid;
+        jf.writeFile(settings_file, obj, function(err) {
+          if (err) {
+            console.log(err);
+          } else {
+            res.send('true');
+          }
+        });
+      });
+    }
+  });
+
 });
 
 // For testing

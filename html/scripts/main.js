@@ -17,8 +17,6 @@ $(document).ready(function () {
   // Click events for navigation
   $('div.nav-item').each(function (i) {
     $(this).click(function () {
-      // Load the script for the module
-
       // Animate to the module
       $('div#module-group')
         .animate({

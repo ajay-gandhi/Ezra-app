@@ -10,6 +10,13 @@ $(document).ready(function () {
     ipc.send('minimize-window-event', 'true');
   });
 
+  // Receive username/pw if sent
+  require('ipc').on('creds', function(res) {
+    var creds = JSON.parse(res);
+    $('input#netid').val(creds.netid);
+    $('input#password').val(creds.password);
+  });
+
   // Login actions
   $('button#login-button').click(function (e) {
     netid = $('input#netid').val();

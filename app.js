@@ -11,7 +11,9 @@ server.stdout.on('data', function (chunk) {
 var app           = require('app'),
     BrowserWindow = require('browser-window'),
     ipc           = require('ipc'),
-    request       = require('request');
+    request       = require('request'),
+    keychain      = require('xkeychain'),
+    jf            = require('jsonfile');
 
 // Main GUI window
 var main_window = null;
@@ -32,8 +34,25 @@ app.on('ready', function () {
     transparent: true
   });
 
-  // load main page
+  // Load main page
   main_window.loadUrl('file://' + __dirname + '/html/login.html');
+
+  // Retrieve pw if it exists and send it
+  main_window.webContents.on('did-finish-load', function() {
+    jf.readFile('./settings.json', function(err, obj) {
+      keychain.getPassword({ account: obj.netid, service: 'Ezra' }, function(err, pass) {
+        if (err) {
+          console.log(err);
+        } else {
+          var creds = {
+            netid: obj.netid,
+            password: pass
+          };
+          main_window.webContents.send('creds', JSON.stringify(creds));
+        }
+      });
+    });
+  });
 
   // Make a request to the headless browser to init it
   // Give it 2 seconds to start up
@@ -51,7 +70,11 @@ app.on('ready', function () {
   });
 });
 
-// Events for closing, minimizing window
+/******************************************************************************/
+/*************************** Events from the window ***************************/
+/******************************************************************************/
+
+// Closing, minimizing window
 ipc.on('close-window', function (e, arg) {
   if (arg === 'true') {
     main_window.close();
@@ -61,6 +84,18 @@ ipc.on('close-window', function (e, arg) {
 ipc.on('minimize-window', function (e, arg) {
   if (arg === 'true') {
     main_window.minimize();
+  }
+});
+
+// Toggle remember netid/pw
+ipc.on('toggle-remember', function (e, arg) {
+  if (arg === 'true') {
+    request('http://127.0.0.1:3005/remember?do=true', function (error, response, body) {
+      if (body !== 'true') {
+        console.error('Error saving password:');
+        console.log(error);
+      }
+    });
   }
 });
 
