@@ -1,3 +1,16 @@
 div#settings-module {
   padding: 20px;
 }
+
+div.checked {
+  background-color: #FF0000;
+}
+div#toggle-button {
+  display: inline-block;
+  width: 25px;
+  height: 25px;
+  padding: 0px;
+  border: 2px solid #FF0000;
+  border-radius: 5px;
+  cursor: pointer;
+}

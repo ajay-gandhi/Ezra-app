@@ -57,20 +57,32 @@ server.get('/information', function (req, res) {
     });
 });
 
-// Save the username/pw
-server.get('/remember', function (req, res) {
+// Update settings
+server.get('/settings', function (req, res) {
+
+  var pw_store = password
+  if (req.query.remember === 'false') {
+    pw_store = ' ';
+  }
 
   // Store the username/pw in the keychain
-  keychain.setPassword({ account: netid, service: 'Ezra', password: password }, function(err) {
+  keychain.setPassword({
+    account: netid,
+    service: 'Ezra',
+    password: pw_store
+  }, function(err) {
     if (err) {
       console.log(err);
     } else {
-      console.log('Password saved');
 
-      // Write the netid to settings file
+      // Write each setting to the file
       jf.readFile(settings_file, function(err, obj) {
-        // Add prop to existing settings
-        obj.netid = netid;
+        Object.keys(req.query).forEach(function(key) {
+          // Add each individual prop to existing settings
+          obj[key] = req.query[key];
+        });
+
+        // Write to settings file
         jf.writeFile(settings_file, obj, function(err) {
           if (err) {
             console.log(err);

@@ -1,3 +1,8 @@
+/*
+ * This file acts as the controller between the server, which controls the
+ * majority of backend functions, and the window.
+ */
+
 // Start a Nodejs server
 var spawn  = require('child_process').spawn,
     server = spawn('node', ['server.js']);
@@ -76,16 +81,18 @@ ipc.on('minimize-window', function (e, arg) {
   }
 });
 
-// Toggle remember netid/pw
-ipc.on('toggle-remember', function (e, arg) {
-  if (arg === 'true') {
-    request('http://127.0.0.1:3005/remember?do=true', function (error, response, body) {
-      if (body !== 'true') {
-        console.error('Error saving password:');
-        console.log(error);
-      }
-    });
-  }
+// Update settings
+ipc.on('settings-update', function (e, arg) {
+  args = JSON.parse(arg);
+  request({
+    uri: 'http://127.0.0.1:3005/settings',
+    qs:  args
+  }, function (error, response, body) {
+    if (body !== 'true') {
+      console.error('Error updating settings');
+      console.log(error);
+    }
+  });
 });
 
 // Login was successful
