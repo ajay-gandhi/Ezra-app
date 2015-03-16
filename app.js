@@ -49,11 +49,13 @@ app.on('ready', function () {
         if (err) {
           console.log(err);
         } else {
-          var creds = {
-            netid: obj.netid,
-            password: pass
-          };
-          main_window.webContents.send('creds', JSON.stringify(creds));
+          if (pass !== ' ') {
+            var creds = {
+              netid: obj.netid,
+              password: pass
+            };
+            main_window.webContents.send('creds', JSON.stringify(creds));
+          }
         }
       });
     });
@@ -85,7 +87,7 @@ ipc.on('minimize-window', function (e, arg) {
 ipc.on('settings-update', function (e, arg) {
   args = JSON.parse(arg);
   request({
-    uri: 'http://127.0.0.1:3005/settings',
+    uri: 'http://127.0.0.1:3005/update-settings',
     qs:  args
   }, function (error, response, body) {
     if (body !== 'true') {

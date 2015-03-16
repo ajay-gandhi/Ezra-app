@@ -57,41 +57,59 @@ server.get('/information', function (req, res) {
     });
 });
 
-// Update settings
+// Serve the settings
 server.get('/settings', function (req, res) {
+  jf.readFile(settings_file, function (err, obj) {
+    res.send(obj);
+  });
+});
 
-  var pw_store = password
-  if (req.query.remember === 'false') {
-    pw_store = ' ';
-  }
+// Update settings
+server.get('/update-settings', function (req, res) {
 
-  // Store the username/pw in the keychain
-  keychain.setPassword({
-    account: netid,
-    service: 'Ezra',
-    password: pw_store
-  }, function(err) {
-    if (err) {
-      console.log(err);
-    } else {
+  // Update settings in file
+  jf.readFile(settings_file, function(err, obj) {
+    // Add each individual prop to existing settings
+    Object.keys(req.query).forEach(function(key) {
+      obj[key] = req.query[key];
+    });
 
-      // Write each setting to the file
-      jf.readFile(settings_file, function(err, obj) {
-        Object.keys(req.query).forEach(function(key) {
-          // Add each individual prop to existing settings
-          obj[key] = req.query[key];
-        });
+    // Write to settings file
+    jf.writeFile(settings_file, obj, function(err) {
+      if (err) {
+        console.log(err);
+      } else {
 
-        // Write to settings file
-        jf.writeFile(settings_file, obj, function(err) {
-          if (err) {
-            console.log(err);
-          } else {
-            res.send('true');
-          }
-        });
-      });
-    }
+        // Settings file updated, now update keychain
+        if (req.query.remember === 'false') {
+          // Delete the password
+          keychain.deletePassword({
+            account: netid,
+            service: 'Ezra'
+          }, function (err) {
+            if (err) {
+              console.log(err);
+            } else {
+              res.send('true');
+            }
+          });
+        } else {
+          // Store the username/pw in the keychain
+          keychain.setPassword({
+            account: netid,
+            service: 'Ezra',
+            password: password
+          }, function(err) {
+            if (err) {
+              console.log(err);
+            } else {
+              res.send('true');
+            }
+          });
+
+        }
+      }
+    });
   });
 });
 
