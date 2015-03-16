@@ -69,6 +69,9 @@ server.get('/update-settings', function (req, res) {
 
   // Update settings in file
   jf.readFile(settings_file, function(err, obj) {
+    // Update netid
+    obj.netid = netid;
+
     // Add each individual prop to existing settings
     Object.keys(req.query).forEach(function(key) {
       obj[key] = req.query[key];

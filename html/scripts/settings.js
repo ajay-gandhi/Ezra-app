@@ -22,6 +22,9 @@ $(document).ready(function () {
   // Click event for remember me
   $('div#toggle-button')
     .click(function () {
+      settings.remember = !settings.remember;
+      $(this).toggleClass('checked');
+
       $.ajax({
         url: 'http://127.0.0.1:3005/update-settings',
         method: 'GET',
