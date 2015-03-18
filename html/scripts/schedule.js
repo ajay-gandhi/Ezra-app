@@ -48,7 +48,7 @@ $(document).ready(function () {
 
         // Insert, position, and style event
         $('div#schedule')
-          .append('<div class="wcalendar-event" id="' + data[i].number + c + '"></div>')
+          .append('<div class="wcalendar-event" data-course="' + data[i].number + '" id="' + data[i].number + c + '"></div>')
           .find('div#' + data[i].number + c)
           .html(
             '<span class="title">' + data[i].id + '</span><br />' +
@@ -66,9 +66,8 @@ $(document).ready(function () {
 
       // Insert into sidebar
       $('div#sidebar')
-        .append('<div class="course-info" id="' + data[i].number + '"></div>');
-
-      $('div#' + data[i].number)
+        .append('<div class="course-info" data-course="' + data[i].number + '" id="' + data[i].number + '"></div>')
+        .find('div#' + data[i].number)
         .html(
             '<div class="color">&nbsp;</div>' +
             '<span class="title">' + data[i].id + '</span><br />' +
@@ -85,25 +84,40 @@ $(document).ready(function () {
 
     }
 
-    $('div.wcalendar-event').click(function () {
+    $('div.wcalendar-event')
+      .click(function () {
+        // Push sidebar in
+        if (sidebarOut) {
+          sidebarOut = false;
+          $('div#sidebar')
+            .stop()
+            .animate({
+              right: '-150px'
+            }, 'fast');
 
-      if (sidebarOut) {
-        sidebarOut = false;
-        $('div#sidebar')
-          .stop()
-          .animate({
-            right: '-150px'
-          }, 'fast');
-
-      } else {
-        sidebarOut = true;
-        $('div#sidebar')
-          .stop()
-          .animate({
-            right: '0px'
-          }, 'fast');
-        }
-    });
+        } else {
+          // Pull sidebar out
+          sidebarOut = true;
+          $('div#sidebar')
+            .stop()
+            .animate({
+              right: '0px'
+            }, 'fast');
+          }
+      })
+      .hover(function () {
+        // Fade out others
+        var this_number = $(this).attr('data-course');
+        $('div#sidebar div.course-info')
+          .not('div.course-info[data-course="' + this_number + '"]')
+          .clearQueue()
+          .fadeTo(150, 0.2);
+      }, function () {
+        // Fade all in
+        $('div#sidebar div.course-info')
+          .clearQueue()
+          .fadeTo(150, 1);
+      });
   });
 });
 
