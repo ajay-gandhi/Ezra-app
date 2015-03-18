@@ -29,7 +29,7 @@ div#day-label-container {
   position: absolute;
   bottom: 0px;
   right: 0px;
-  z-index: 999;
+  z-index: 50;
   width: 830px;
   font-size: 15px;
   color: #333;
@@ -55,6 +55,7 @@ div.wcalendar-event {
   position: absolute;
   overflow: hidden;
   line-height: 1.25;
+  cursor: pointer;
 }
 
 div.wcalendar-event span.title {
@@ -66,4 +67,39 @@ div.wcalendar-event span.time {
 }
 div.wcalendar-event span.place {
   font-size: 11px;
+}
+
+/* Sidebar */
+div#sidebar {
+  position: absolute;
+  bottom: 0px;
+  right: -150px;
+  z-index: 51;
+  width: 150px;
+  height: 550px;
+  border-left: 2px solid #BBBBBB;
+  background-color: #FFFFFF;
+}
+
+div.course-info {
+  position: relative;
+  margin: 15px 0px 0px 0px;
+}
+div.course-info div.color {
+  position: absolute;
+  top: 3px;
+  left: 24px;
+  width: 15px;
+  height: 15px;
+  border-radius: 7px;
+}
+div.course-info span.title {
+  font-size: 15px;
+  font-weight: bold;
+}
+div.course-info span.type {
+  font-size: 12px;
+}
+div.course-info span.number {
+  font-size: 10px;
 }

@@ -108,8 +108,8 @@ module.exports = (function () {
             course.end      = when[3];
 
             // Location
-            course.where = pieces[5];
-            course.id = pieces[0].split('-')[0];
+            course.where  = pieces[5];
+            course.id     = pieces[0].split('-')[0];
             course.number = inside_parens.exec(pieces[1])[1] + '-'
               + pieces[0].split('-')[1];
             courses.push(course);

@@ -1,6 +1,8 @@
 /**
  * Handles the fetching and display of the student's schedule
  */
+var sidebarOut = false;
+
 $(document).ready(function () {
   // Create the background table cells
   for (var t = 800; t <= 2300; t += 100) {
@@ -44,12 +46,10 @@ $(document).ready(function () {
         var loc_left = (num_of_day(data[i].days[c]) * 118) + 61;
         var height   = time_to_pos(data[i].end) - time_to_pos(data[i].start);
 
+        // Insert, position, and style event
         $('div#schedule')
-          .append('<div class="wcalendar-event" id="' + data[i].number + c + '"></div>');
-
-        // Set properties of the event
-        $('div#' + data[i].number + c)
-          .last()
+          .append('<div class="wcalendar-event" id="' + data[i].number + c + '"></div>')
+          .find('div#' + data[i].number + c)
           .html(
             '<span class="title">' + data[i].id + '</span><br />' +
             '<span class="time">' + data[i].start.toLowerCase() + ' &#8211; ' + data[i].end.toLowerCase() + '</span><br />' +
@@ -63,7 +63,47 @@ $(document).ready(function () {
             height: height + 'px'
           });
       }
+
+      // Insert into sidebar
+      $('div#sidebar')
+        .append('<div class="course-info" id="' + data[i].number + '"></div>');
+
+      $('div#' + data[i].number)
+        .html(
+            '<div class="color">&nbsp;</div>' +
+            '<span class="title">' + data[i].id + '</span><br />' +
+            '<span class="type">' + complete_type(data[i].type) + '</span><br />' +
+            '<span class="time">' + data[i].start.toLowerCase() + ' &#8211; ' + data[i].end.toLowerCase() + '</span><br />' +
+            '<span class="place">' + two_words_num(data[i].where) + '</span><br />' +
+            '<span class="number">Number: ' + data[i].number + '</span>'
+        )
+        .find('div.color')
+        .css({
+          backgroundColor: bg_color,
+          border: '1px solid ' + border_color
+        });
+
     }
+
+    $('div.wcalendar-event').click(function () {
+
+      if (sidebarOut) {
+        sidebarOut = false;
+        $('div#sidebar')
+          .stop()
+          .animate({
+            right: '-150px'
+          }, 'fast');
+
+      } else {
+        sidebarOut = true;
+        $('div#sidebar')
+          .stop()
+          .animate({
+            right: '0px'
+          }, 'fast');
+        }
+    });
   });
 });
 
@@ -200,4 +240,18 @@ var stringify_time = function (time, ampm) {
 var random_seed = function(seed) {
     var x = Math.sin(seed) * 10000;
     return x - Math.floor(x);
+}
+
+/**
+ * Completes the class type, i.e. LEC -> Lecture
+ * Requires: [String] type - The original shorteend type
+ * Returns: [String] The completed type
+ */
+var complete_type = function(type) {
+  switch (type.toLowerCase()) {
+    case 'lec':  return 'Lecture'
+    case 'dis':  return 'Discussion'
+    case 'lab':  return 'Lab'
+    default:     return 'Lecture'
+  }
 }
