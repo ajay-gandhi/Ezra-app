@@ -1,6 +1,11 @@
 var ipc = require('ipc');
 
 $(document).ready(function () {
+  // Fade window in
+  $('body').animate({
+    opacity: '1.0'
+  }, 300);
+
   // Meta actions (close, minimize)
   $('button#close').click(function () {
     ipc.send('close-window', 'true');

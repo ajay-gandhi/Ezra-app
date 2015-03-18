@@ -50,14 +50,9 @@ $(document).ready(function () {
         login_result(true, function () {
           $('div#login')
             .delay(500)
-            .animate({
-              top: '-300px'
-            }, {
-              duration: $(window).height() / 2,
-              complete: function () {
-                // Tell backend to open index.html
-                ipc.send('login-successful', 'true');
-              }
+            .fadeOut(150, function () {
+              // Tell backend to open index.html
+              ipc.send('login-successful', 'true');
             });
         });
       }
