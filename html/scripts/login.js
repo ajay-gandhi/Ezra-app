@@ -11,7 +11,7 @@ $(document).ready(function () {
   });
 
   // Receive username/pw if sent
-  require('ipc').on('creds', function(res) {
+  ipc.on('creds', function(res) {
     var creds = JSON.parse(res);
     $('input#netid').val(creds.netid.trim());
     $('input#password').val(creds.password.trim());
