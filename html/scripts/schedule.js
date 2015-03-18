@@ -85,6 +85,7 @@ $(document).ready(function () {
     }
 
     $('div.wcalendar-event')
+      // Click actions for calendar events (animates sidebar)
       .click(function () {
         // Push sidebar in
         if (sidebarOut) {
@@ -105,19 +106,37 @@ $(document).ready(function () {
             }, 'fast');
           }
       })
+      // Hover actions for calendar events (fades sidebar elements)
       .hover(function () {
         // Fade out others
         var this_number = $(this).attr('data-course');
         $('div#sidebar div.course-info')
           .not('div.course-info[data-course="' + this_number + '"]')
           .clearQueue()
-          .fadeTo(150, 0.2);
+          .fadeTo(150, 0.1);
       }, function () {
         // Fade all in
         $('div#sidebar div.course-info')
           .clearQueue()
           .fadeTo(150, 1);
       });
+
+    // Hover actions for sidebar (fades calendar events)
+    $('div#sidebar div.course-info')
+      .hover(function () {
+        // Fade out others
+        var this_number = $(this).attr('data-course');
+        $('div.wcalendar-event')
+          .not('div.wcalendar-event[data-course="' + this_number + '"]')
+          .clearQueue()
+          .fadeTo(150, 0.2);
+      }, function () {
+        // Fade all in
+        $('div.wcalendar-event')
+          .clearQueue()
+          .fadeTo(150, 1);
+      });
+
   });
 });
 
