@@ -1,4 +1,4 @@
-/**
+/*
  * Loads personal information about the student
  */
 $(document).ready(function () {
@@ -8,10 +8,10 @@ $(document).ready(function () {
   }).done(function (data) {
     $('div#information')
       .html(
-        '<span>' + data.bursar + '</span>' +
-        '<span>' + data.advisor + '</span>' +
-        '<span>' + data.student_id + '</span>' +
-        '<img style="opacity: 0.1"src="' + data.image + '" />'
+        '<span>' + data.bursar + '</span><br />' +
+        '<span>' + data.advisor + '</span><br />' +
+        '<span>' + data.student_id + '</span><br />' +
+        '<img style="opacity: 0.1" src="' + data.image + '" />'
       );
   });
 });
