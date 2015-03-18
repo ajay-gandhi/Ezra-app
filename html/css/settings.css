@@ -1,9 +1,17 @@
 div#settings-module {
-  padding: 20px;
+  padding: 20px 0px;
+}
+
+span.settings-label {
+  padding-right: 10px;
+}
+span.settings-option {
+  padding-left: 10px;
 }
 
 div.checked {
   background-color: #FF0000;
+  border: 1px solid green;
 }
 div#toggle-button {
   display: inline-block;
