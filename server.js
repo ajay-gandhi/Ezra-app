@@ -122,11 +122,8 @@ server.get('/hello', function (req, res) {
 });
 
 server.get('/menus', function (req, res) {
-  console.log('got the thing')
   rp('http://redapi-tious.rhcloud.com/dining/menu/ALL/ALL/LOCATIONS')
   .then(function (info) {
-    console.log('sent the thing')
-    console.log(info)
     res.send(info);
   });
 });
