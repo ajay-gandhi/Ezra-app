@@ -26,11 +26,13 @@ packages.
 Remove the specified line in `package.json`:
 
     "dependencies": {
-      "body-parser": "^1.12.0",
       "es6-promise": "^2.0.1",
       "express": "^4.12.0",
-      "request": "^2.53.0",      // Remove the comma
-      "zombie": "^2.5.1"         // Delete this line
+      "jsonfile": "^2.0.0",
+      "request": "^2.53.0",
+      "request-promise": "^0.4.0",
+      "xkeychain": "0.0.5",         // Remove the comma
+      "zombie": "^2.5.1"            // Delete this line
     }
 
 Don't forget to remove the comma in the previous line.
