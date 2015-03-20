@@ -12,6 +12,9 @@ var settings_file = './settings.json';
 // Keep netid and pw for keychain possibly
 var netid, password;
 
+// Keep local copy of settings
+var settings;
+
 // Initialize the headless browser to speedup login
 var student = new StudentCenter();
 student
@@ -59,9 +62,13 @@ server.get('/information', function (req, res) {
 
 // Serve the settings
 server.get('/settings', function (req, res) {
-  jf.readFile(settings_file, function (err, obj) {
-    res.send(obj);
-  });
+  if (settings) {
+    res.send(settings);
+  } else {
+    jf.readFile(settings_file, function (err, obj) {
+      res.send(obj);
+    });
+  }
 });
 
 // Update settings
@@ -76,6 +83,8 @@ server.get('/update-settings', function (req, res) {
     Object.keys(req.query).forEach(function(key) {
       obj[key] = req.query[key];
     });
+
+    settings = obj;
 
     // Write to settings file
     jf.writeFile(settings_file, obj, function(err) {
