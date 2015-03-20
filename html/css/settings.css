@@ -2,10 +2,18 @@ div#settings-module {
   padding: 20px 0px;
 }
 
-span.settings-label {
+div.settings-label {
+  display: inline-block;
+  text-align: right;
+  width: 60%;
+  height: 50px;
   padding-right: 10px;
 }
-span.settings-option {
+div.settings-option {
+  display: inline-block;
+  text-align: left;
+  width: 39%;
+  height: 50px;
   padding-left: 10px;
 }
 
@@ -13,7 +21,7 @@ div.checked {
   background-color: #FF0000;
   border: 1px solid green;
 }
-div#toggle-button {
+div.toggle-button {
   display: inline-block;
   width: 25px;
   height: 25px;

@@ -5,7 +5,8 @@ var ipc = require('ipc');
 
 // Maintain a local copy of all settings
 var settings = {
-  remember: false
+  remember: false,
+  id_image: false
 }
 
 var update_timeout;
@@ -19,13 +20,24 @@ $(document).ready(function () {
     method: 'GET'
   }).done(function (data) {
     settings.remember = (data.remember === 'true');
-    $('div#toggle-button').toggleClass('checked', settings.remember);
+    $('div#toggle-remember').toggleClass('checked', settings.remember);
+
+    settings.id_image = (data.id_image === 'true');
+    $('div#toggle-id-image').toggleClass('checked', settings.id_image);
   });
 
   // Click event for remember me
-  $('div#toggle-button')
+  $('div#toggle-remember')
     .click(function () {
       settings.remember = !settings.remember;
+      $(this).toggleClass('checked');
+      update_settings();
+    });
+
+  // Click event for ID image
+  $('div#toggle-id-image')
+    .click(function () {
+      settings.id_image = !settings.id_image;
       $(this).toggleClass('checked');
       update_settings();
     });
