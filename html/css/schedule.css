@@ -1,3 +1,7 @@
+div#schedule-wrapper {
+  overflow-x: hidden;
+}
+
 /* Calendar */
 table#wcalendar {
   width: 100%;
