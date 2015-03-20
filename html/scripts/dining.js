@@ -29,6 +29,8 @@ $(document).ready(function() {
           .append('<li><h3>' + meal + '</h3></li>');
 
 
+        if (!data[location][meal]) return;
+
         // Reduce data to {category : [tag, tag, ...], ...}
         var order = data[location][meal].reduce(function (acc, next) {
           if(!acc[next.category]) acc[next.category] = '';
