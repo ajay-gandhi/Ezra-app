@@ -44,7 +44,7 @@ app.on('ready', function () {
 
   // Retrieve pw if it exists and send it
   main_window.webContents.on('did-finish-load', function() {
-    jf.readFile('./settings.json', function(err, obj) {
+    jf.readFile(__dirname + '/settings.json', function(err, obj) {
       keychain.getPassword({ account: obj.netid, service: 'Ezra' }, function(err, pass) {
         if (err) {
           console.log(err);
