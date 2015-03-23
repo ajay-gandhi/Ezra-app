@@ -5,7 +5,7 @@
 
 // Start a Nodejs server
 var spawn  = require('child_process').spawn,
-    server = spawn('node', ['server.js']);
+    server = spawn('node', [__dirname + '/server.js']);
 
 // Log output from the server
 server.stdout.on('data', function (chunk) {
