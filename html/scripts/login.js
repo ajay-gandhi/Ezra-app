@@ -1,5 +1,8 @@
 var netid;
 var ipc = require('ipc');
+var login_result_delay = 1000,
+    login_animation_duration = 200;
+
 
 $(document).ready(function () {
   // Meta actions (close, minimize)
@@ -16,6 +19,18 @@ $(document).ready(function () {
     $('input#netid').val(creds.netid.trim());
     $('input#password').val(creds.password.trim());
   });
+
+  // Wait for 0.5 seconds
+  setTimeout(function () {
+    // Enable inputs
+    $('input, button').removeAttr('disabled');
+    $('input#netid').focus();
+
+    // Fade out cover
+    $('div#login-cover, div#loading').fadeOut({
+      duration: 300
+    });
+  }, 1000);
 
   // Login actions
   $('button#login-button').click(function (e) {
@@ -66,12 +81,10 @@ $(document).ready(function () {
  *           [function] callback  - A function to call after all animations
  */
 var login_result = function (successful, callback) {
-  var login_result_delay = 1000,
-      login_animation_duration = 200;
-
   $('div#login-cover')
     .css({
-      display: 'block'
+      display: 'block',
+      opacity: '0.0'
     })
     .fadeTo(login_animation_duration, '0.5', function () {
       $(this)
