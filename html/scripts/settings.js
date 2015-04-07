@@ -39,6 +39,10 @@ $(document).ready(function () {
     .click(function () {
       settings.id_image = !settings.id_image;
       $(this).toggleClass('checked');
+
+      // Show or hide id image
+      $('div#information-module img').parent().parent().toggle();
+
       update_settings();
     });
 });
