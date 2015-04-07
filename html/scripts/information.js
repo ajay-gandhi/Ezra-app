@@ -36,18 +36,17 @@ $(document).ready(function () {
         '<div class="information-option">' + data.citybucks + '</div>' +
       '</div>';
 
-
-
-    $('div#information-module')
-      .html(infoHTML);
-
       $.ajax({
         url: 'http://127.0.0.1:3005/settings',
         method: 'GET'
       }).done(function (data) {
-        // Hide id_image if settings
+        // Set HTML
+        $('div#information-module')
+          .html(infoHTML);
+
+        // Hide image if settings
         if (!(data.id_image === 'true')) {
-          $('div#information-module img').hide();
+          $('div#information-module img').parent().parent().hide();
         }
       });
   });
