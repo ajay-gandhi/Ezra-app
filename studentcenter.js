@@ -12,6 +12,8 @@ module.exports = (function () {
 
   function StudentCenter() {
     this.browser = new Zombie();
+    this.netid;
+    this.password;
   }
 
   /**
@@ -45,6 +47,8 @@ module.exports = (function () {
    *   if login was unsuccessful.
    */
   StudentCenter.prototype.login = function (netid, password) {
+    this.netid = netid;
+    this.password = password;
     var self = this;
     var browser = self.browser;
 
@@ -239,17 +243,15 @@ module.exports = (function () {
   }
 
   /**
-   * TODO
-   *
-   * Returns an object containing information about the student, e.g. advisor
-   *   and school address.
+   * Returns an object containing information about the student, e.g. advisor.
    * Returns: [Promise] An object containing the student's personal information:
    *   - Advisor
    *   - Assigned Address
    *   - Bursar charges
    */
   StudentCenter.prototype.getInformation = function () {
-    var browser = this.browser;
+    var self = this;
+    var browser = self.browser;
 
     return new Promise(function (resolve, reject) {
       var info = {};
@@ -310,7 +312,75 @@ module.exports = (function () {
               var image = new Buffer(body, 'binary').toString('base64');
 
               info.image = data_uri_prefix + image;
-              resolve(info);
+
+              /**************************/
+              /** Get account balances **/
+              /**************************/
+              var id;
+              browser.runScripts = false;
+
+              browser
+                .visit('http://card.campuslife.cornell.edu')
+                .then(function() {
+                  // Fill login info
+                  browser
+                    .fill('loginphrase', info.student_id)
+                    .fill('password', self.password);
+
+                  return browser.pressButton('input[type="image"]');
+                })
+                .then(function () {
+                  // Result is a JavaScript redirect, but runScripts = false
+                  // Extract URL and manually redirect
+                  var rgx = /'(.*?)'/i;
+                  var text = browser.text('body');
+
+                  var url = text.match(rgx)[0];
+                  url = url.substr(1, url.length - 2);
+
+                  id = url;
+
+                  return browser.visit('https://card.campuslife.cornell.edu' + url);
+                })
+                .then(function () {
+                  // Now at intermediate login page
+                  // Mimic actions conducted by the JS on this page
+                  var ePos = id.indexOf('=');
+                  var aPos = id.indexOf('&');
+                  id = id.substring(ePos + 1, aPos);
+
+                  login_check(id, 0)
+                    .then(function () {
+                      // Get info
+                      browser
+                        .visit('https://card.campuslife.cornell.edu/index.php?skey=' + id + '&cid=7&')
+                        .then(function () {
+
+                          // Get all the <b> tags in mainbody, one for each account
+                          var tbl = browser.query('div#mainbody').children[1];
+                          var bs = tbl.getElementsByTagName('b');
+
+                          info.citybucks = bs[0].textContent.substr(9).trim();
+                          info.brbs      = bs[1].textContent.substr(9).trim();
+                          info.laundry   = bs[2].textContent.substr(9).trim();
+
+                          // Reset
+                          browser.runScripts = true;
+                          browser.visit(urls.main);
+
+                          resolve(info);
+                        });
+                    })
+                    .catch(function () {
+                      // Login failed for some reason, so ignore this portion
+
+                      // Reset
+                      browser.runScripts = true;
+                      browser.visit(urls.main);
+
+                      resolve(info);
+                    });
+                });
             }
           }); 
         });
@@ -320,3 +390,40 @@ module.exports = (function () {
   return StudentCenter;
 
 })();
+
+/*
+ * Continually conducts the login check until access is granted, then returns.
+ * Requires: [string] id - The id of the transaction
+ *           [int] count - The number of tries so far
+ * Returns: [Promise] True if the login was accepted within 4 tries, false
+ *   otherwise.
+ */
+var login_check = function (id, count) {
+  return new Promise(function (resolve, reject) {
+    request('https://card.campuslife.cornell.edu/login-check.php?skey=' + id, function (e, r, b) {
+      // If tried 4 times, quit
+      if (count >= 4) {
+        reject(false);
+      }
+
+      // Check if the XML message = 1 or not
+      if ((b.split('1').length - 1) != 2) {
+        // Login has not been accepted yet, so try again in 0.5s
+        setTimeout(function () {
+          count++;
+          login_check(id, count)
+            .then(function () {
+              resolve(true);
+            })
+            .catch(function () {
+              reject(false);
+            });
+        }, 500);
+
+      } else {
+        // Login accepted by their server, return true
+        resolve(true);
+      }
+    });
+  });
+}
