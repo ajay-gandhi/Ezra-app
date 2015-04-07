@@ -2,21 +2,22 @@
 <head>
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css">
   <link rel="stylesheet" type="text/css" href="./css/header.css" />
-  <link rel="stylesheet" type="text/css" href="./css/layout.css" />
-  <link rel="stylesheet" type="text/css" href="./css/dining.css" />
   <link rel="stylesheet" type="text/css" href="./css/main.css" />
+  <link rel="stylesheet" type="text/css" href="./css/layout.css" />
   <link rel="stylesheet" type="text/css" href="./css/schedule.css" />
+  <link rel="stylesheet" type="text/css" href="./css/information.css" />
+  <link rel="stylesheet" type="text/css" href="./css/dining.css" />
   <link rel="stylesheet" type="text/css" href="./css/settings.css" />
   
   <title>Ezra</title>
   <script type="text/javascript">
     window.$ = window.jQuery = require('./scripts/jquery.min.js');
   </script>
-  <script type="text/javascript" src="./scripts/main.js"></script>
   <script type="text/javascript" src="./scripts/header.js"></script>
+  <script type="text/javascript" src="./scripts/main.js"></script>
   <script type="text/javascript" src="./scripts/schedule.js"></script>
-  <script type="text/javascript" src="./scripts/dining.js"></script>
   <script type="text/javascript" src="./scripts/information.js"></script>
+  <script type="text/javascript" src="./scripts/dining.js"></script>
   <script type="text/javascript" src="./scripts/settings.js"></script>
 </head>
 <body>
@@ -39,7 +40,7 @@
             </div>
             <div id="sidebar"></div>
           </div>
-          <div class="module" id="information"></div>
+          <div class="module" id="information-module">Loading...</div>
           <div class="module">
             <div id="dining-calendar-container">
               <div class="dining-calendar-column">
@@ -124,6 +125,7 @@
               <div class="settings-label">Display ID image in information tab</div>
               <div class="settings-option"><div class="toggle-button" id="toggle-id-image">&nbsp;</div></div>
             </div>
+            <div id="restart-note"><em>Note:</em> The app must restart for some changes to take effect.</div>
           </div>
           <div class="module">
             fifth item

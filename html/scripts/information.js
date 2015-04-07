@@ -6,13 +6,40 @@ $(document).ready(function () {
     url: 'http://127.0.0.1:3005/information',
     method: 'GET'
   }).done(function (data) {
-    $('div#information')
-      .html(
-        '<span>' + data.bursar + '</span><br />' +
-        '<span>' + data.advisor + '</span><br />' +
-        '<span>' + data.student_id + '</span><br />' +
-        '<img src="' + data.image + '" />'
-      );
+    var infoHTML = '' +
+      '<div class="information-group">' +
+        '<div class="information-label">Bursar</div>' +
+        '<div class="information-option">' + data.bursar + '</div>' +
+      '</div>' +
+      '<div class="information-group">' +
+        '<div class="information-label">Advisor</div>' +
+        '<div class="information-option">' + data.advisor + '</div>' +
+      '</div>' +
+      '<div class="information-group">' +
+        '<div class="information-label">Student ID</div>' +
+        '<div class="information-option">' + data.student_id + '</div>' +
+      '</div>' +
+      '<div class="information-group">' +
+        '<div class="information-label">ID Image</div>' +
+        '<div class="information-option"><img src="' + data.image + '" /></div>' +
+      '</div>' +
+      '<div class="information-group">' +
+        '<div class="information-label">Big Red Bucks Balance</div>' +
+        '<div class="information-option">' + data.brbs + '</div>' +
+      '</div>' +
+      '<div class="information-group">' +
+        '<div class="information-label">Laundry Balance</div>' +
+        '<div class="information-option">' + data.laundry + '</div>' +
+      '</div>' +
+      '<div class="information-group">' +
+        '<div class="information-label">CityBucks Balance</div>' +
+        '<div class="information-option">' + data.citybucks + '</div>' +
+      '</div>';
+
+
+
+    $('div#information-module')
+      .html(infoHTML);
 
       $.ajax({
         url: 'http://127.0.0.1:3005/settings',
@@ -20,7 +47,7 @@ $(document).ready(function () {
       }).done(function (data) {
         // Hide id_image if settings
         if (!(data.id_image === 'true')) {
-          $('div#information img').hide();
+          $('div#information-module img').hide();
         }
       });
   });
