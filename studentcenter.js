@@ -256,9 +256,30 @@ module.exports = (function () {
     return new Promise(function (resolve, reject) {
       var info = {};
 
-      // Get bursar status
-      var bursar = browser.query('span.SSSMSGINFOTEXT').textContent.trim();
-      info.bursar = bursar;
+      if (browser.query('span.SSSMSGINFOTEXT')) {
+        // Bursar status is no charges
+        // Get bursar status
+        var bursar = browser.query('span.SSSMSGINFOTEXT').textContent.trim();
+        info.bursar = bursar;
+      } else {
+        // Student owes something
+
+        // Get all span.PABOLDTEXT
+        var bursar_spans = browser.queryAll('span.PABOLDTEXT');
+
+        // There is probably only 1 so get its textcontent
+        if (bursar_spans.length == 1) {
+          info.bursar = bursar_spans[0].textContent.trim();
+        } else {
+
+          // If there are many, find the right one
+          for (var i = 0; i < bursar_spans.length; i++) {
+            if (bursar_spans[i].textContent.trim().indexOf('You owe') > -1) {
+              info.bursar = bursar_spans[i].textContent.trim();
+            }
+          }
+        }
+      }
 
       // Get advisor
       var advisor_tables = browser.queryAll('table.PABACKGROUNDINVISIBLEWBO');
