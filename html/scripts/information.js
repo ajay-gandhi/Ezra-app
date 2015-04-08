@@ -25,15 +25,15 @@ $(document).ready(function () {
       '</div>' +
       '<div class="information-group">' +
         '<div class="information-label">Big Red Bucks Balance</div>' +
-        '<div class="information-option">' + data.brbs + '</div>' +
+        '<div class="information-option">$' + data.brbs + '</div>' +
       '</div>' +
       '<div class="information-group">' +
         '<div class="information-label">Laundry Balance</div>' +
-        '<div class="information-option">' + data.laundry + '</div>' +
+        '<div class="information-option">$' + data.laundry + '</div>' +
       '</div>' +
       '<div class="information-group">' +
         '<div class="information-label">CityBucks Balance</div>' +
-        '<div class="information-option">' + data.citybucks + '</div>' +
+        '<div class="information-option">$' + data.citybucks + '</div>' +
       '</div>';
 
       $.ajax({
