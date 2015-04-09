@@ -1,13 +1,6 @@
 'use strict';
-/* global console, 
-          require, 
-          application, 
-          Window, 
-          Menu, 
-          MenuItem, 
-          MenuItemSeparator, 
-          process, 
-          WebView */
+/* global console, require, application, Window, Menu, MenuItem, 
+          MenuItemSeparator, process, WebView */
 
 // Needed for zombie to work. This is on harmony, which isn't enabled on default
 // tint compile apparently.
@@ -17,38 +10,6 @@ if (typeof String.prototype.startsWith != 'function') {
     return this.indexOf(str) === 0;
   };
 }
-
-var server = require('./server');
-
-// Includes Tint's API, and sets up the runtime bridge.
-require('Common'); 
-
-application.exitAfterWindowsClose = true;
-application.name = 'My Program';
-
-
-/* The window */
-var win = new Window(); // initially hidden.
-win.visible = true;
-win.title = 'Some Title';
-win.appearance = 'dark';
-win.canBeFullscreen = false;
-// win.resizable = false;
-
-
-/* The web view */
-var webview = new WebView();
-webview.left = webview.right = webview.top = webview.bottom = 0;
-
-// What we should do when the web-page loads.
-webview.addEventListener('load', function() {
-    // win.title = webview.title;
-    // webview.postMessage(JSON.stringify(process.versions));
-});
-
-// webview.addEventListener('message', function(msg) {
-//   console.log(msg);
-// });
 
 /**
  * Sends a message to given namespace. 
@@ -69,6 +30,29 @@ Response.prototype.send = function(body) {
 };
 
 
+////////////////////////////////////////////////////////////////////////////////
+
+var server = require('./server');
+
+// Includes Tint's API, and sets up the runtime bridge.
+require('Common'); 
+
+application.exitAfterWindowsClose = true;
+application.name = 'My Program';
+
+
+/* The window */
+var win = new Window(); // initially hidden.
+win.visible = true;
+win.title = 'Some Title';
+win.appearance = 'dark';
+win.canBeFullscreen = false;
+// win.resizable = false;
+
+
+/* The web view. */
+var webview = new WebView();
+
 webview.addEventListener('message', function(msg) {
   var data = JSON.parse(msg);
   
@@ -81,33 +65,22 @@ webview.addEventListener('message', function(msg) {
   if (!server[data.namespace]) 
     console.trace('No action for namespace', data.namespace);
   
+  // Server has all namespace actions.
   server[data.namespace](data.body, new Response(data.namespace, webview));
 });
 
-
-
-webview.addEventListener('error', function(err) { console.log('error', err); });
-webview.addEventListener('policy', function(url) {
-   if(url === 'https://www.google.com') {
-     console.log('blocking requests to google!');
-     return false;
-   }
-});
-webview.addEventListener('request', function() { console.log('request'); });
-webview.addEventListener('location-change', function() { console.log('location-change'); });
-webview.addEventListener('load', function() { console.log('yo'); });
-
-webview.location = 'app://html/login.html'; // Tell the webview to render the index.html
+webview.left = webview.right = webview.top = webview.bottom = 0;
+webview.location = 'app://html/login.html';
 win.appendChild(webview);
 
 /* The toolbar */
 // var toolbar = new Toolbar();
 // toolbar.appendChild(new Button())
-// 
 // win.toolbar = toolbar;
 
 
 /* The menu */
+// I copied this from someplace. lol. I think the tests for tint acutally.
 
 var ismac = require('os').platform().toLowerCase() == 'darwin';
 var mainMenu   = new Menu();
