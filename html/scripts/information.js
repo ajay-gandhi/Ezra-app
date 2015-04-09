@@ -42,7 +42,7 @@ $(document).ready(function () {
       '</div>';
 
       app.request('/settings', null);
-      app.recieve('/information', function (data) {
+      app.recieve('/settings', function (data) {
 
         $('div#information-module')
           .html(infoHTML);

@@ -55,7 +55,6 @@ function Messenger () {
 
 var handle_message = function(message) {
   try {
-    console.log('-->' + message.data);
     console.log('listeners: ' + JSON.stringify(Object.keys(this.listeners)));
 
     var msg = JSON.parse(message.data);
