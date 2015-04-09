@@ -22,7 +22,7 @@ div#login {
   margin-left: -175px;
   text-align: center;
   width: 350px;
-  height: 310px;
+  /* height: 310px; */
   border: 10px solid #333333;
   border-radius: 15px;
   background-color: #FFFFFF;

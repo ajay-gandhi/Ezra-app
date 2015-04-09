@@ -1,24 +1,13 @@
+  'use strict';
+/* global $, Messenger */
+
 var netid;
-var ipc = require('ipc');
 var login_result_delay = 1000,
     login_animation_duration = 200;
 
-
 $(document).ready(function () {
-  // Meta actions (close, minimize)
-  $('button#close').click(function () {
-    ipc.send('close-window', 'true');
-  });
-  $('button#minimize').click(function () {
-    ipc.send('minimize-window', 'true');
-  });
 
-  // Receive username/pw if sent
-  ipc.on('creds', function(res) {
-    var creds = JSON.parse(res);
-    $('input#netid').val(creds.netid.trim());
-    $('input#password').val(creds.password.trim());
-  });
+  var app = window.coolio;
 
   // Wait for 0.5 seconds
   setTimeout(function () {
@@ -43,32 +32,38 @@ $(document).ready(function () {
     $('button#login-button').prop('disabled', true);
     $('button#login-button').text('Logging in...');
 
-    // Ajax request to server
-    $.ajax({
-      url: 'http://127.0.0.1:3005/login',
-      method: 'GET',
-      data: {
-        netid: netid,
-        password: $('input#password').val()
-      }
-    }).done(function (data) {
-      if (data.toString() === 'false') {
-        // Login failed
-        login_result(false, function () {
-          $('input#netid').focus();
-          $('button#login-button').prop('disabled', false);
-          $('button#login-button').text('Login');
-        });
+    var data = {
+      netid: netid,
+      password: $('input#password').val()
+    };
 
-      } else {
+
+    // Login procedure
+
+    app.request('/login', data);
+
+    app.recieve('/login', function (success) {
+
+      if (success) {
+
         // Login successful
         login_result(true, function () {
           $('div#login')
             .delay(500)
             .fadeOut(150, function () {
               // Tell backend to open index.html
-              ipc.send('login-successful', 'true');
+              app.request('login-successful', true);
             });
+        });
+
+
+      } else {
+
+        // Login failed
+        login_result(false, function () {
+          $('input#netid').focus();
+          $('button#login-button').prop('disabled', false);
+          $('button#login-button').text('Login');
         });
       }
     });
@@ -116,4 +111,4 @@ var login_result = function (successful, callback) {
           });
       }
     });
-}
+};

@@ -1,11 +1,15 @@
+'use strict';
+/* global $, Messenger */
+
 /*
  * Loads personal information about the student
  */
+
+ var app = window.coolio;
+
 $(document).ready(function () {
-  $.ajax({
-    url: 'http://127.0.0.1:3005/information',
-    method: 'GET'
-  }).done(function (data) {
+  app.request('/information', null);
+  app.recieve('/information', function (data) {
     $('div#information')
       .html(
         '<span>' + data.bursar + '</span><br />' +
@@ -14,12 +18,10 @@ $(document).ready(function () {
         '<img src="' + data.image + '" />'
       );
 
-      $.ajax({
-        url: 'http://127.0.0.1:3005/settings',
-        method: 'GET'
-      }).done(function (data) {
+      app.request('/settings', null);
+      app.recieve('/information', function (data) {
         // Hide id_image if settings
-        if (!(data.id_image === 'true')) {
+        if (!data.id_image) {
           $('div#information img').hide();
         }
       });

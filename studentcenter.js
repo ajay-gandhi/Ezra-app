@@ -12,28 +12,36 @@ module.exports = (function () {
 
   function StudentCenter() {
     this.browser = new Zombie();
+    //Browser.localhost('example.com', 3000);
   }
 
-  /**
-   * Initializes the headless browser by visiting studentcenter.cornell.edu
-   * Returns: [Promise] An initialized StudentCenter object
-   */
+
   StudentCenter.prototype.init = function () {
     var self = this;
     var browser = self.browser;
 
-    return new Promise(function (resolve, rejeect) {
+    console.log('Initing zombie')
+
+    return new Promise(function (resolve, reject) {
       // Visit Student Center
-      browser
+
+      return browser
         .visit(urls.main)
         .then(function () {
+          console.log('bro')
           // Wait for redirects
           return browser.wait();
         })
         .then(function () {
+          console.log('zombie inited to', browser.text('title'))
           // Return the init'ed object
           resolve(self);
+        })
+        .catch(function (err) {
+          console.trace(err)
+          reject(err);
         });
+        
     });
   }
 
@@ -49,6 +57,8 @@ module.exports = (function () {
     var browser = self.browser;
 
     return new Promise(function (resolve, reject) {
+
+      console.log('ready')
       // Fill in NetID and pw
       browser
         .fill('netid', netid)
@@ -56,6 +66,7 @@ module.exports = (function () {
         .select('realm', 'CIT.CORNELL.EDU')
         .pressButton('Submit')
         .then(function () {
+          console.log('yo dawg')
           if (browser.text('title') === 'Student Center') {
             // Login successful
             resolve(self);
