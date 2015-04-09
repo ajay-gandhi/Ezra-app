@@ -10,17 +10,25 @@
   <link rel="stylesheet" type="text/css" href="./css/settings.css" />
   
   <title>Ezra</title>
-  <script type="text/javascript">
-    window.$ = window.jQuery = require('./scripts/jquery.min.js');
-  </script>
+  <script src="https://code.jquery.com/jquery-2.1.3.min.js"></script>
+  <script type="text/javascript" src="./scripts/app_messenger.js"></script>
   <script type="text/javascript" src="./scripts/header.js"></script>
   <script type="text/javascript" src="./scripts/main.js"></script>
   <script type="text/javascript" src="./scripts/schedule.js"></script>
+  <script type="text/javascript" src="./scripts/settings.js"></script>
   <script type="text/javascript" src="./scripts/information.js"></script>
   <script type="text/javascript" src="./scripts/dining.js"></script>
-  <script type="text/javascript" src="./scripts/settings.js"></script>
+  <!--
+  TODO: BUGS
+    - Timeout when logging it makes the thing just hang:
+    Unhandled rejection Error: Timeout: did not get to load all resources on this page
+        at timeout (/Users/Kevin/Sites/tint/Ezra-app/node_modules/zombie/lib/eventloop.js:545:36)
+        at Timer.listOnTimeout (timers.js:110:15)
+   -->
 </head>
 <body>
+  <h1>THEY SEE ME LOGGIN</h1>
+  <div id="log"></div>
   <div id="main-wrapper">
     <div id="main" class="container-fluid">
       <header>
@@ -131,9 +139,6 @@
           </div>
         </div>
       </div>
-
-      <button type="button" id="close" class="btn btn-danger meta">&times;</button>
-      <button type="button" id="minimize" class="btn btn-warning meta">&#8211;</button>
     </div>
   </div>
 </body>

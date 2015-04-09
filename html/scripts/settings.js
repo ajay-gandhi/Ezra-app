@@ -1,29 +1,23 @@
-/*
- * Handles settings events
- */
-var ipc = require('ipc');
-
+'use strict';
+/* global Messenger, $ */
 // Maintain a local copy of all settings
 var settings = {
   remember: false,
   id_image: false
-}
+};
 
 var update_timeout;
+
+var app = window.coolio;
 
 // Change attributes based on settings object
 $(document).ready(function () {
 
   // Fetch and update settings
-  $.ajax({
-    url: 'http://127.0.0.1:3005/settings',
-    method: 'GET'
-  }).done(function (data) {
-    settings.remember = (data.remember === 'true');
-    $('div#toggle-remember').toggleClass('checked', settings.remember);
-
-    settings.id_image = (data.id_image === 'true');
-    $('div#toggle-id-image').toggleClass('checked', settings.id_image);
+  app.request('/settings', null);
+  app.recieve('/settings', function (data) {
+    $('div#toggle-remember').toggleClass('checked', data.remember);
+    $('div#toggle-id-image').toggleClass('checked', data.id_image);
   });
 
   // Click event for remember me
@@ -53,13 +47,9 @@ $(document).ready(function () {
 var update_settings = function () {
   // Conduct update after 1 second to prevent multiple web calls if numerous
   // settings are being updated. In this fashion, everything in the settings
-  // object will be updated and the new settings will be sent to the server all
+  // object will be updated and the new settings will be sent all
   // at once.
   update_timeout = window.setTimeout(function () {
-    $.ajax({
-      url: 'http://127.0.0.1:3005/update-settings',
-      method: 'GET',
-      data: settings
-    });
+    app.request('/update-settings', settings);
   }, 1000);
-}
+};

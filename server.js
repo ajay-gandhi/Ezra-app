@@ -1,12 +1,11 @@
 'use strict';
-/* global require, console */
-var express       = require('express'),
-    keychain      = require('xkeychain'),
-    jf            = require('jsonfile'),
+/* global require, console, module */
+var jf            = require('jsonfile'),
     StudentCenter = require('./studentcenter.js'),
-    rp            = require('request-promise');
+    rp            = require('request-promise'),
+    keychain      = require('xkeychain');
 
-var server = express();
+
 var settings_file = './settings.json';
 
 // Keep netid and pw for keychain possibly
@@ -15,53 +14,57 @@ var netid, password;
 // Keep local copy of settings
 var settings;
 
-// Initialize the headless browser to speedup login
+
+//Initialize the headless browser to speedup login
 var student = new StudentCenter();
+
 student
   .init()
   .then(function (sc_new) {
     student = sc_new;
+  })
+  .catch(function (err) {
+    console.trace(err);
   });
 
 // Login user
-server.get('/login', function (req, res) {
+module.exports['/login'] = function (body, res) {
   // Get the username and pw from the request
-  netid    = req.query.netid;
-  password = req.query.password;
+  // 
+  
+  netid    = body.netid;
+  password = body.password;
 
   student
     .login(netid, password)
     .then(function (sc_new) {
       // Store the student's headless browser locally
       student = sc_new;
-      res.send('true');
+      res.send(true);
     })
-    .catch(function () {
+    .catch(function (err) {
+      console.error(err);
       // The login failed
-      res.send('false');
+      res.send(false);
     });
-});
+};
+
+
+module.exports['login-successful'] = function (body, res) {
+  res.where.location = 'app://html/index.html';
+};
 
 // Serves the student's courses in JSON
-server.get('/courses', function (req, res) {
+module.exports['/courses'] = function (body, res) {
   student
     .getCourses()
     .then(function (courses) {
       res.send(courses);
     });
-});
-
-// Serve the student's personal information and student id image
-server.get('/information', function (req, res) {
-  student
-    .getInformation()
-    .then(function (info) {
-      res.send(info);
-    });
-});
+};
 
 // Serve the settings
-server.get('/settings', function (req, res) {
+module.exports['/settings'] = function (body, res) {
   if (settings) {
     res.send(settings);
   } else {
@@ -69,10 +72,10 @@ server.get('/settings', function (req, res) {
       res.send(obj);
     });
   }
-});
+};
 
 // Update settings
-server.get('/update-settings', function (req, res) {
+module.exports['/update-settings'] = function (body, res) {
 
   // Update settings in file
   jf.readFile(settings_file, function(err, obj) {
@@ -80,8 +83,8 @@ server.get('/update-settings', function (req, res) {
     obj.netid = netid;
 
     // Add each individual prop to existing settings
-    Object.keys(req.query).forEach(function(key) {
-      obj[key] = req.query[key];
+    Object.keys(body).forEach(function(key) {
+      obj[key] = body[key];
     });
 
     settings = obj;
@@ -93,7 +96,7 @@ server.get('/update-settings', function (req, res) {
       } else {
 
         // Settings file updated, now update keychain
-        if (req.query.remember === 'false') {
+        if (body.remember === 'false') {
           // Delete the password
           keychain.deletePassword({
             account: netid,
@@ -123,23 +126,34 @@ server.get('/update-settings', function (req, res) {
       }
     });
   });
-});
+};
+
+
+// Serve the student's personal information and student id image
+module.exports['/information'] = function (body, res) {
+  student
+    .getInformation()
+    .then(function (info) {
+      res.send(info);
+    });
+};
+
+
 
 // For testing
-server.get('/hello', function (req, res) {
+module.exports['/hello'] = function (body, res) {
   res.send('hello wordl'); // lol ajay. BRUH.
-});
+};
 
-server.get('/menus', function (req, res) {
+module.exports['/menus'] = function (body, res) {
+  console.log('calling redapi');
   rp('http://redapi-tious.rhcloud.com/dining/menu/ALL/ALL/LOCATIONS')
   .then(function (info) {
-    res.send(info);
+    console.log('GOT THE MENUS');
+    res.send(JSON.parse(info));
+  })
+  .catch(function (err) {
+    console.log('yo my b');
+    console.trace(err);
   });
-});
-
-// Start the server
-var server_port = 3005;
-var server_ip_address = '127.0.0.1';
-server.listen(server_port, server_ip_address, function () {
-  console.log('Ready');
-});
+};

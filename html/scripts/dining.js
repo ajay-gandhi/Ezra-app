@@ -1,5 +1,6 @@
 'use strict';
-/* global $ */
+/* global $, Messenger */
+
 var date = new Date();
 var today = '' + date.getFullYear();
 if (date.getMonth() + 1 < 10) {
@@ -9,19 +10,18 @@ if (date.getMonth() + 1 < 10) {
 }
 today += date.getDate();
 
+var app = window.coolio;
+
+
 $(document).ready(function() {
+
   var src = $('iframe').attr('src');
   $('iframe')
     .attr('src', src + '&mode=DAY&dates=' + today + '/' + today);
 
-
-  // Load menus
-  $.ajax({
-    url: 'http://127.0.0.1:3005/menus',
-    method: 'GET'
-  }).done(function (data) {
-    var data = JSON.parse(data);
-
+  app.request('/menus', null);
+  app.recieve('/menus', function (data) {
+    console.log('RECIEVED THE MENUS! ')
     for (var location in data) {
       ['Breakfast', 'Brunch', 'Lunch', 'Dinner'].forEach(function (meal) {
 

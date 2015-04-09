@@ -1,18 +1,11 @@
-var ipc = require('ipc');
+'use strict';
+/* global $ */
 
 $(document).ready(function () {
   // Fade window in
-  $('body').animate({
-    opacity: '1.0'
-  }, 300);
-
-  // Meta actions (close, minimize)
-  $('button#close').click(function () {
-    ipc.send('close-window', 'true');
-  });
-  $('button#minimize').click(function () {
-    ipc.send('minimize-window', 'true');
-  });
+  // $('body').animate({
+  //   opacity: '1.0'
+  // }, 300);
 
   // Move the modules into a row
   $('div.module').each(function (index) {

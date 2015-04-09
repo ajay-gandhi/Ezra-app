@@ -1,113 +1,164 @@
-/*
- * This file acts as the controller between the server, which controls the
- * majority of backend functions, and the window.
+'use strict';
+/* global console, require, application, Window, Menu, MenuItem, 
+          MenuItemSeparator, process, WebView */
+
+// Needed for zombie to work. This is on harmony, which isn't enabled on default
+// tint compile apparently.
+if (typeof String.prototype.startsWith != 'function') {
+  // see below for better implementation!
+  String.prototype.startsWith = function (str){
+    return this.indexOf(str) === 0;
+  };
+}
+
+/**
+ * Sends a message to given namespace. 
+ * @param {[type]} namespace [description]
  */
+function Response (namespace, where) {
+  this.namespace = namespace;
+  this.where = where;
+}
 
-// Start a Nodejs server
-var spawn  = require('child_process').spawn,
-    server = spawn('node', [__dirname + '/server.js']);
-
-// Log output from the server
-server.stdout.on('data', function (chunk) {
-  console.log('Server output: ', chunk.toString().trim());
-});
-
-// Start the app itself
-var app           = require('app'),
-    BrowserWindow = require('browser-window'),
-    ipc           = require('ipc'),
-    request       = require('request'),
-    keychain      = require('xkeychain'),
-    jf            = require('jsonfile');
-
-// Main GUI window
-var main_window = null;
-
-// Quit when all windows closed
-app.on('window-all-closed', function () {
-  app.quit();
-});
-
-// Called when atom-shell inits everything
-app.on('ready', function () {
-  // Create window
-  main_window = new BrowserWindow({
-    width: 380,
-    height: 320,
-    resizable: true,
-    frame: false,
-    transparent: true
+Response.prototype.send = function(body) {
+  var msg = JSON.stringify({
+    namespace : this.namespace,
+    body : body
   });
 
-  // Load main page
-  main_window.loadUrl('file://' + __dirname + '/html/login.html');
+  this.where.postMessage(msg);
+};
 
-  // Retrieve pw if it exists and send it
-  main_window.webContents.on('did-finish-load', function() {
-    jf.readFile(__dirname + '/settings.json', function(err, obj) {
-      keychain.getPassword({ account: obj.netid, service: 'Ezra' }, function(err, pass) {
-        if (err) {
-          console.log(err);
-        } else {
-          if (pass !== ' ') {
-            var creds = {
-              netid: obj.netid,
-              password: pass
-            };
-            main_window.webContents.send('creds', JSON.stringify(creds));
-          }
-        }
-      });
+
+////////////////////////////////////////////////////////////////////////////////
+
+var server = require('./server');
+
+// Includes Tint's API, and sets up the runtime bridge.
+require('Common'); 
+
+application.exitAfterWindowsClose = true;
+application.name = 'My Program';
+
+
+/* The window */
+var win = new Window(); // initially hidden.
+win.visible = true;
+win.title = 'Some Title';
+win.appearance = 'dark';
+win.canBeFullscreen = false;
+// win.resizable = false;
+
+
+/* The web view. */
+var webview = new WebView();
+
+webview.addEventListener('message', function(msg) {
+  var data = JSON.parse(msg);
+  
+  if (!data.namespace)
+    console.trace('Message has no namespace. Plz.');
+  
+  if (!data.body) 
+    console.trace('Message has no body. Plz.');
+  
+  if (!server[data.namespace]) 
+    console.trace('No action for namespace', data.namespace);
+  
+  // Server has all namespace actions.
+  server[data.namespace](data.body, new Response(data.namespace, webview));
+});
+
+webview.left = webview.right = webview.top = webview.bottom = 0;
+webview.location = 'app://html/login.html';
+win.appendChild(webview);
+
+/* The toolbar */
+// var toolbar = new Toolbar();
+// toolbar.appendChild(new Button())
+// win.toolbar = toolbar;
+
+
+/* The menu */
+// I copied this from someplace. lol. I think the tests for tint acutally.
+
+var ismac = require('os').platform().toLowerCase() == 'darwin';
+var mainMenu   = new Menu();
+var appleMenu  = new MenuItem(application.name, '');
+var fileMenu   = new MenuItem('File', '');
+var editMenu   = new MenuItem('Edit', '');
+var windowMenu = new MenuItem('Window', '');
+var helpMenu   = new MenuItem('Help', '');
+
+/* @hidden */ if(ismac)
+mainMenu.appendChild(appleMenu);
+mainMenu.appendChild(fileMenu);
+mainMenu.appendChild(editMenu);
+mainMenu.appendChild(windowMenu);
+mainMenu.appendChild(helpMenu);
+
+var appleSubmenu = new Menu(application.name);
+appleSubmenu.appendChild(new MenuItem('About '+application.name, ''))
+    .addEventListener('click', function() { console.log('Do something for about!'); });
+appleSubmenu.appendChild(new MenuItemSeparator());
+appleSubmenu.appendChild(new MenuItem('Hide '+application.name, 'h'))
+    .addEventListener('click', function() { application.visible = false; });
+appleSubmenu.appendChild(new MenuItem('Hide Others', ''))
+    .addEventListener('click', function() { application.hideAllOtherApplications(); });
+appleSubmenu.appendChild(new MenuItem('Show All', ''))
+    .addEventListener('click', function() { application.unhideAllOtherApplications(); });
+appleSubmenu.appendChild(new MenuItemSeparator());
+appleSubmenu.appendChild(new MenuItem('Quit '+application.name, 'q'))
+    .addEventListener('click', function() { 
+      /* @hidden */ if(ismac) process.exit(0); 
     });
+appleMenu.submenu = appleSubmenu;
+
+var fileSubmenu = new Menu('File');
+fileSubmenu.appendChild(new MenuItem('New File', 'f'));
+fileSubmenu.appendChild(new MenuItem('Open...', 'o'));
+fileSubmenu.appendChild(new MenuItem('Save', 's'));
+fileSubmenu.appendChild(new MenuItem('Save As...', 'S', 'shift'));
+fileSubmenu.appendChild(new MenuItemSeparator());
+fileSubmenu.appendChild(new MenuItem('Close', 'c', 'cmd'))
+  .addEventListener('click', function() {
+    /* @hidden */ if(!ismac) process.exit(0);
   });
+fileMenu.submenu = fileSubmenu;
 
-  main_window.on('close', function () {
-    server.kill('SIGTERM');
-  });
-});
+var editSubmenu = new Menu('Edit');
+var undo = new MenuItem('Undo', 'u');
+undo.addEventListener('click', function() { application.undo(); });
+editSubmenu.appendChild(undo);
+editSubmenu.appendChild(new MenuItem('Redo', 'r'))
+    .addEventListener('click', function() { application.redo(); });
+editSubmenu.appendChild(new MenuItemSeparator());
+editSubmenu.appendChild(new MenuItem('Copy', 'c'))
+    .addEventListener('click', function() { application.copy(); });
+editSubmenu.appendChild(new MenuItem('Cut', 'x'))
+    .addEventListener('click', function() { application.cut(); });
+editSubmenu.appendChild(new MenuItem('Paste', 'p'))
+    .addEventListener('click', function() { application.paste(); });
+editMenu.submenu = editSubmenu;
 
-/******************************************************************************/
-/*************************** Events from the window ***************************/
-/******************************************************************************/
+var windowSubmenu = new Menu('Window');
+windowSubmenu.appendChild(new MenuItem('Minimize', 'm'))
+    .addEventListener('click', function() { win.state = 'minimized'; });
+windowSubmenu.appendChild(new MenuItem('Zoom', ''))
+    .addEventListener('click', function() { win.state = 'maximized'; });
+windowSubmenu.appendChild(new MenuItemSeparator());
+windowSubmenu.appendChild(new MenuItem('Bring All to Front', ''))
+    .addEventListener('click', function() { win.bringToFront(); });
+windowSubmenu.appendChild(new MenuItemSeparator());
+windowMenu.submenu = windowSubmenu;
 
-// Closing, minimizing window
-ipc.on('close-window', function (e, arg) {
-  if (arg === 'true') {
-    main_window.close();
-  }
-});
+var helpSubmenu = new Menu('Help');
+helpSubmenu.appendChild(new MenuItem('Website', ''))
+  .addEventListener('click', function() { console.log('Do something for website?!'); });
+helpSubmenu.appendChild(new MenuItem('Online Documentation', ''))
+  .addEventListener('click', function() { console.log('Do something for docs?!'); });
+helpSubmenu.appendChild(new MenuItem('License', ''))
+  .addEventListener('click', function() { console.log('Do something for license?!'); });
+helpMenu.submenu = helpSubmenu;
 
-ipc.on('minimize-window', function (e, arg) {
-  if (arg === 'true') {
-    main_window.minimize();
-  }
-});
-
-// Update settings
-ipc.on('settings-update', function (e, arg) {
-  args = JSON.parse(arg);
-  request({
-    uri: 'http://127.0.0.1:3005/update-settings',
-    qs:  args
-  }, function (error, response, body) {
-    if (body !== 'true') {
-      console.error('Error updating settings');
-      console.log(error);
-    }
-  });
-});
-
-// Login was successful
-ipc.on('login-successful', function (e, arg) {
-  // Resize and center
-  main_window.setSize(930, 630);
-
-  // Find current position, subtract 1/2 new size
-  var cur_pos = main_window.getPosition();
-  var new_x = cur_pos[0] - 465 + 190;
-  var new_y = cur_pos[1] - 315 + 170;
-  main_window.setPosition(new_x, new_y);
-
-  // Load new page
-  main_window.loadUrl('file://' + __dirname + '/html/index.html');
-});
+win.menu = mainMenu;

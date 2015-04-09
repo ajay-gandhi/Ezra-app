@@ -1,11 +1,16 @@
+'use strict';
+/* global $, Messenger */
+
 /*
  * Loads personal information about the student
  */
+
+ var app = window.coolio;
+
 $(document).ready(function () {
-  $.ajax({
-    url: 'http://127.0.0.1:3005/information',
-    method: 'GET'
-  }).done(function (data) {
+  app.request('/information', null);
+  app.recieve('/information', function (data) {
+
     var infoHTML = '' +
       '<div class="information-group">' +
         '<div class="information-label">Bursar</div>' +
@@ -36,18 +41,20 @@ $(document).ready(function () {
         '<div class="information-option">$' + data.citybucks + '</div>' +
       '</div>';
 
-      $.ajax({
-        url: 'http://127.0.0.1:3005/settings',
-        method: 'GET'
-      }).done(function (data) {
-        // Set HTML
+      app.request('/settings', null);
+      app.recieve('/settings', function (data) {
+
         $('div#information-module')
           .html(infoHTML);
 
         // Hide image if settings
-        if (!(data.id_image === 'true')) {
+        if (data.id_image)
           $('div#information-module img').parent().parent().hide();
-        }
+
+        // Hide id_image if settings
+        if (!data.id_image)
+          $('div#information img').hide();
+        
       });
   });
 });

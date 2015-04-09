@@ -1,15 +1,21 @@
+'use strict';
+/* global $, Messenger */
+
 /**
  * Handles the fetching and display of the student's schedule
  */
 var sidebarOut = false;
+var app = window.coolio;
 
 $(document).ready(function () {
+
+
   // Create the background table cells
   for (var t = 800; t <= 2300; t += 100) {
     $('table#wcalendar').append('<tr>');
     var tr = $('table#wcalendar tr').last();
     for (var d = 0; d < 8; d++) {
-      if (d == 0) {
+      if (d === 0) {
         tr.append('<th>' + stringify_time(t) + '</th>');
       } else {
         tr.append('<td>&nbsp;</td>');
@@ -34,7 +40,9 @@ $(document).ready(function () {
 
   get_courses(function (data) {
     // Fill calendar
+
     for (var i = 0; i < data.length; i++) {
+
       // Add event for each day
       var course_seed = parseInt(data[i].number.split('-')[0]);
       var bg_color = random_color(course_seed);
@@ -152,21 +160,19 @@ var two_words_num = function (str) {
   var first_match = str.match(r)[0];
   first_match = first_match.replace('Hll', 'Hall');
   return first_match;
-}
+};
 
 /**
  * Makes a GET request to fetch the student's courses
- * Requires: [function] callback - A function to call after the AJAX call
+ * Requires: [function] callback - A function to call after the request
  *   returns the courses
  */
 var get_courses = function(callback) {
-  $.ajax({
-    url: 'http://127.0.0.1:3005/courses',
-    method: 'GET'
-  }).done(function (data) {
+  app.request('/courses', null);  
+  app.recieve('/courses', function (data) {
     callback(data);
   });
-}
+};
 
 /**
  * Generates a random pastel color
@@ -182,7 +188,7 @@ var random_color = function (seed) {
   var b = (Math.round(random_seed(seed / 4) * scale) + offset).toString(16);
 
   return '#' + r + g + b;
-}
+};
 
 /**
  * Generates a darker version of the given hex color
@@ -196,7 +202,7 @@ var darker_color = function (og) {
   var b = parseInt(og.substr(5, 2), 16) - offset;
 
   return '#' + r.toString(16) + g.toString(16) + b.toString(16);
-}
+};
 
 /**
  * Returns a number representation for a day [0-6]
@@ -206,7 +212,7 @@ var darker_color = function (og) {
 var num_of_day = function (day) {
   var days = ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'];
   return days.indexOf(day);
-}
+};
 
 /**
  * Given a time as a string, converts the string into an integer representing
@@ -229,7 +235,7 @@ var time_to_pos = function (time) {
   hour *= 60;
 
   return Math.floor(hour + min);
-}
+};
 
 /**
  * Given an integer time, stringifies the integer into the format HH:MM[am|pm]
@@ -253,7 +259,7 @@ var stringify_time = function (time, ampm) {
       ap = 'am';
     }
   }
-  if (hour == 0) {
+  if (hour === 0) {
     hour = 12;
   }
 
@@ -263,7 +269,7 @@ var stringify_time = function (time, ampm) {
   }
   var stringified = hour + '<span class="ampm">' + ap + '</span>';
   return stringified;
-}
+};
 
 /**
  * Generates a random number given a seed
@@ -273,7 +279,7 @@ var stringify_time = function (time, ampm) {
 var random_seed = function(seed) {
     var x = Math.sin(seed) * 10000;
     return x - Math.floor(x);
-}
+};
 
 /**
  * Completes the class type, i.e. LEC -> Lecture
@@ -282,9 +288,9 @@ var random_seed = function(seed) {
  */
 var complete_type = function(type) {
   switch (type.toLowerCase()) {
-    case 'lec':  return 'Lecture'
-    case 'dis':  return 'Discussion'
-    case 'lab':  return 'Lab'
-    default:     return 'Lecture'
+    case 'lec':  return 'Lecture';
+    case 'dis':  return 'Discussion';
+    case 'lab':  return 'Lab';
+    default:     return 'Lecture';
   }
-}
+};
