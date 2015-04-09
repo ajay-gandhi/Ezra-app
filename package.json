@@ -13,10 +13,10 @@
   },
   "icon": {
     "osx": [
-      "./icon.png"
+      "./html/icon.png"
     ],
     "windows": [
-      "./icon.png"
+      "./html/icon.png"
     ]
   },
   "dependencies": {
