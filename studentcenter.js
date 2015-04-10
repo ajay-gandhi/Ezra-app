@@ -361,6 +361,17 @@ module.exports = (function () {
                   return browser.pressButton('input[type="image"]');
                 })
                 .then(function () {
+
+                  var err = browser.query('font.error');
+                  if (err) {
+                    if (err.textContent.trim().indexOf('Invalid') >= 0) {
+                      // Password not accepted
+                      // Just return regular info
+                      info.login = false;
+                      resolve(info);
+                    }
+                  }
+
                   // Result is a JavaScript redirect, but runScripts = false
                   // Extract URL and manually redirect
                   var rgx = /'(.*?)'/i;
