@@ -47,6 +47,9 @@ win.visible = true;
 win.title = 'Some Title';
 win.appearance = 'dark';
 win.canBeFullscreen = false;
+win.width = 900;
+win.height = 620;
+win.animateOnSizeChange = true;
 // win.resizable = false;
 
 
