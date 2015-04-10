@@ -9,18 +9,6 @@ $(document).ready(function () {
 
   var app = window.coolio;
 
-  // Wait for 0.5 seconds
-  setTimeout(function () {
-    // Enable inputs
-    $('input, button').removeAttr('disabled');
-    $('input#netid').focus();
-
-    // Fade out cover
-    $('div#login-cover, div#loading').fadeOut({
-      duration: 300
-    });
-  }, 1000);
-
   // Login actions
   $('button#login-button').click(function (e) {
     netid = $('input#netid').val();
