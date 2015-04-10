@@ -52,6 +52,11 @@ win.height = 620;
 win.animateOnSizeChange = true;
 // win.resizable = false;
 
+// Center window
+var screens = require('Screens');
+var active = screens.active;
+win.x = (active.bounds.width / 2) - 450;
+win.y = (active.bounds.height / 2) - 310;
 
 /* The web view. */
 var webview = new WebView();
