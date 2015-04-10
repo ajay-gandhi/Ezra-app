@@ -27,19 +27,32 @@ $(document).ready(function () {
       '<div class="information-group">' +
         '<div class="information-label">ID Image</div>' +
         '<div class="information-option"><img src="' + data.image + '" /></div>' +
-      '</div>' +
-      '<div class="information-group">' +
-        '<div class="information-label">Big Red Bucks Balance</div>' +
-        '<div class="information-option">$' + data.brbs + '</div>' +
-      '</div>' +
-      '<div class="information-group">' +
-        '<div class="information-label">Laundry Balance</div>' +
-        '<div class="information-option">$' + data.laundry + '</div>' +
-      '</div>' +
-      '<div class="information-group">' +
-        '<div class="information-label">CityBucks Balance</div>' +
-        '<div class="information-option">$' + data.citybucks + '</div>' +
       '</div>';
+
+    // Student's pwd to card.campuslife may differ
+    if (data.login == false) {
+      infoHTML += '' +
+        '<div class="information-group">' +
+          '<div id="diff-pwd">' +
+          'Your password to card.campuslife.cornell.edu differs from your ' +
+          'NetID password, so we can\'t get your dining information.' +
+        '</div>';
+
+    } else {
+      infoHTML += '' +
+        '<div class="information-group">' +
+          '<div class="information-label">Big Red Bucks Balance</div>' +
+          '<div class="information-option">$' + data.brbs + '</div>' +
+        '</div>' +
+        '<div class="information-group">' +
+          '<div class="information-label">Laundry Balance</div>' +
+          '<div class="information-option">$' + data.laundry + '</div>' +
+        '</div>' +
+        '<div class="information-group">' +
+          '<div class="information-label">CityBucks Balance</div>' +
+          '<div class="information-option">$' + data.citybucks + '</div>' +
+        '</div>';
+    }
 
       app.request('/settings', null);
       app.recieve('/settings', function (data) {

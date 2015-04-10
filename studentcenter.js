@@ -5,7 +5,8 @@ var Zombie  = require('zombie'),
 var urls = {
   main: 'http://studentcenter.cornell.edu',
   grades: 'https://selfservice.adminapps.cornell.edu/psc/cuselfservice/EMPLOYEE/HRMS/c/SA_LEARNER_SERVICES.SSR_SSENRL_GRADE.GBL',
-  demographics: 'https://selfservice.adminapps.cornell.edu/psc/cuselfservice/EMPLOYEE/HRMS/c/CC_PORTFOLIO.SS_CC_DEMOG_DATA.GBL'
+  demographics: 'https://selfservice.adminapps.cornell.edu/psc/cuselfservice/EMPLOYEE/HRMS/c/CC_PORTFOLIO.SS_CC_DEMOG_DATA.GBL',
+  campuslife: 'https://card.campuslife.cornell.edu'
 }
 
 module.exports = (function () {
@@ -15,7 +16,6 @@ module.exports = (function () {
     this.netid;
     this.password;
   }
-
 
   StudentCenter.prototype.init = function () {
     var self = this;
@@ -351,7 +351,7 @@ module.exports = (function () {
               browser.runScripts = false;
 
               browser
-                .visit('http://card.campuslife.cornell.edu')
+                .visit(urls.campuslife)
                 .then(function() {
                   // Fill login info
                   browser
@@ -363,65 +363,71 @@ module.exports = (function () {
                 .then(function () {
 
                   var err = browser.query('font.error');
-                  if (err) {
-                    if (err.textContent.trim().indexOf('Invalid') >= 0) {
-                      // Password not accepted
-                      // Just return regular info
-                      info.login = false;
-                      resolve(info);
-                    }
+                  if (err && err.textContent.trim().indexOf('Invalid') >= 0) {
+                    // Password not accepted
+                    // Just return regular info
+                    info.login = false;
+
+                    // Reset
+                    browser.runScripts = true;
+                    browser.visit(urls.main);
+
+                    resolve(info);
+                    return;
+
+                  } else {
+                    // Result is a JavaScript redirect, but runScripts = false
+                    // Extract URL and manually redirect
+                    var rgx = /'(.*?)'/i;
+                    var text = browser.text('body');
+
+                    var url = text.match(rgx)[0];
+                    url = url.substr(1, url.length - 2);
+
+                    id = url;
+
+                    browser
+                      .visit(urls.campuslife + url)
+                      .then(function () {
+                        // Now at intermediate login page
+                        // Mimic actions conducted by the JS on this page
+                        var ePos = id.indexOf('=');
+                        var aPos = id.indexOf('&');
+                        id = id.substring(ePos + 1, aPos);
+
+                        return login_check(id, 0);
+                      })
+                      .then(function () {
+                        // Get info
+                        browser
+                          .visit(urls.campuslife + '/index.php?skey=' + id + '&cid=7&')
+                          .then(function () {
+
+                            // Get all the <b> tags in mainbody, one for each account
+                            var tbl = browser.query('div#mainbody').children[1];
+                            var bs = tbl.getElementsByTagName('b');
+
+                            info.citybucks = bs[0].textContent.substr(9).trim();
+                            info.brbs      = bs[1].textContent.substr(9).trim();
+                            info.laundry   = bs[2].textContent.substr(9).trim();
+
+                            // Reset
+                            browser.runScripts = true;
+                            browser.visit(urls.main);
+
+                            resolve(info);
+                          });
+                      })
+                      .catch(function () {
+                        // Login failed for some reason, so ignore this portion
+
+                        // Reset
+                        browser.runScripts = true;
+                        browser.visit(urls.main);
+
+                        resolve(info);
+                      });
                   }
-
-                  // Result is a JavaScript redirect, but runScripts = false
-                  // Extract URL and manually redirect
-                  var rgx = /'(.*?)'/i;
-                  var text = browser.text('body');
-
-                  var url = text.match(rgx)[0];
-                  url = url.substr(1, url.length - 2);
-
-                  id = url;
-
-                  return browser.visit('https://card.campuslife.cornell.edu' + url);
-                })
-                .then(function () {
-                  // Now at intermediate login page
-                  // Mimic actions conducted by the JS on this page
-                  var ePos = id.indexOf('=');
-                  var aPos = id.indexOf('&');
-                  id = id.substring(ePos + 1, aPos);
-
-                  login_check(id, 0)
-                    .then(function () {
-                      // Get info
-                      browser
-                        .visit('https://card.campuslife.cornell.edu/index.php?skey=' + id + '&cid=7&')
-                        .then(function () {
-
-                          // Get all the <b> tags in mainbody, one for each account
-                          var tbl = browser.query('div#mainbody').children[1];
-                          var bs = tbl.getElementsByTagName('b');
-
-                          info.citybucks = bs[0].textContent.substr(9).trim();
-                          info.brbs      = bs[1].textContent.substr(9).trim();
-                          info.laundry   = bs[2].textContent.substr(9).trim();
-
-                          // Reset
-                          browser.runScripts = true;
-                          browser.visit(urls.main);
-
-                          resolve(info);
-                        });
-                    })
-                    .catch(function () {
-                      // Login failed for some reason, so ignore this portion
-
-                      // Reset
-                      browser.runScripts = true;
-                      browser.visit(urls.main);
-
-                      resolve(info);
-                    });
                 });
             }
           }); 
@@ -442,7 +448,7 @@ module.exports = (function () {
  */
 var login_check = function (id, count) {
   return new Promise(function (resolve, reject) {
-    request('https://card.campuslife.cornell.edu/login-check.php?skey=' + id, function (e, r, b) {
+    request(urls.campuslife + '/login-check.php?skey=' + id, function (e, r, b) {
       // If tried 4 times, quit
       if (count >= 4) {
         reject(false);

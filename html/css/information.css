@@ -19,3 +19,8 @@ div.information-option {
   min-height: 50px;
   padding-left: 10px;
 }
+
+div#diff-pwd {
+  height: 50px;
+  line-height: 50px;
+}
