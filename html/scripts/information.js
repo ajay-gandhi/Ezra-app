@@ -58,7 +58,7 @@ $(document).ready(function () {
       $('div#information-module').html(infoHTML);
 
       // Hide image if settings
-      if (data.id_image)
+      if (data.hide_id_image)
         $('div#information-module img').parent().parent().hide();
     });
   });

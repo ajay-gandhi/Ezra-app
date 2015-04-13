@@ -18,6 +18,8 @@ $(document).ready(function () {
   // Fetch and update settings
   app.request('/settings', null);
   app.receive('/settings', function (data) {
+    settings.remember      = data.remember;
+    settings.hide_id_image = data.hide_id_image;
     $('div#toggle-remember').toggleClass('checked', data.remember);
     $('div#toggle-id-image').toggleClass('checked', data.hide_id_image);
   });
