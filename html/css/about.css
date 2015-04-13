@@ -1,0 +1,11 @@
+div#content {
+  text-align: center;
+  padding: 110px 0px 0px 0px;
+  width: 300px;
+  height: 400px;
+}
+
+div#content img {
+  width: 150px;
+  height: auto;
+}
