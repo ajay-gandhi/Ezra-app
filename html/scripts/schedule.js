@@ -1,14 +1,11 @@
 'use strict';
-/* global $, Messenger */
 
-/**
- * Handles the fetching and display of the student's schedule
- */
+/* Handles the fetching and display of the student's schedule */
+
 var sidebarOut = false;
-var app = window.coolio;
+var app = window.messenger;
 
 $(document).ready(function () {
-
 
   // Create the background table cells
   for (var t = 800; t <= 2300; t += 100) {
@@ -38,14 +35,14 @@ $(document).ready(function () {
     .append('<div class="day-label2">Sat</div>')
     .append('<div class="day-label2">Sun</div>');
 
+  // Fill calendar
   get_courses(function (data) {
-    // Fill calendar
 
     for (var i = 0; i < data.length; i++) {
 
       // Add event for each day
-      var course_seed = parseInt(data[i].number.split('-')[0]);
-      var bg_color = random_color(course_seed);
+      var course_seed  = parseInt(data[i].number.split('-')[0]);
+      var bg_color     = random_color(course_seed);
       var border_color = darker_color(bg_color);
 
       for (var c = 0; c < data[i].days.length; c++) {
@@ -92,8 +89,8 @@ $(document).ready(function () {
 
     }
 
+    // Click actions for calendar events (animates sidebar)
     $('div.wcalendar-event')
-      // Click actions for calendar events (animates sidebar)
       .click(function () {
         // Push sidebar in
         if (sidebarOut) {
