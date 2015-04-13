@@ -6,7 +6,7 @@ var app = window.messenger;
 
 $(document).ready(function () {
   app.request('/information', null);
-  app.recieve('/information', function (data) {
+  app.receive('/information', function (data) {
 
     var infoHTML = '' +
       '<div class="information-group">' +
@@ -53,7 +53,7 @@ $(document).ready(function () {
 
     // Need settings for ID image
     app.request('/settings', null);
-    app.recieve('/settings', function (data) {
+    app.receive('/settings', function (data) {
 
       $('div#information-module').html(infoHTML);
 

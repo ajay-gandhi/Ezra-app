@@ -166,7 +166,7 @@ var two_words_num = function (str) {
  */
 var get_courses = function(callback) {
   app.request('/courses', null);  
-  app.recieve('/courses', function (data) {
+  app.receive('/courses', function (data) {
     callback(data);
   });
 };

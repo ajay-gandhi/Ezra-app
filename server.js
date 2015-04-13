@@ -6,7 +6,10 @@ var jf            = require('jsonfile'),
     keychain      = require('xkeychain');
 
 // Location of settings file in user's home dir
-var settings_file = process.env[(process.platform == 'win32') ? 'USERPROFILE' : 'HOME'] + '/.ezra-settings'
+var settings_file = process.env[(process.platform == 'win32')
+  ? 'USERPROFILE'
+  : 'HOME']
+  + '/.ezra-settings';
 
 // Keep netid and pw for keychain possibly
 var netid, password;
@@ -19,6 +22,7 @@ var student = new StudentCenter();
 student
   .init()
   .then(function (sc_new) {
+    console.log('Ready');
     student = sc_new;
   })
   .catch(function (err) {
@@ -29,7 +33,7 @@ student
 // Login user
 module.exports['/login'] = function (body, res) {
   // Get the username and pw from the request
-  
+
   netid    = body.netid;
   password = body.password;
 
@@ -47,7 +51,7 @@ module.exports['/login'] = function (body, res) {
     });
 }
 
-module.exports['login-successful'] = function (body, res) {
+module.exports['/login-successful'] = function (body, res) {
   res.where.location = 'app://html/index.html';
 };
 
@@ -88,6 +92,7 @@ module.exports['/update-settings'] = function (body, res) {
       obj[key] = body[key];
     });
 
+    // Update local copy
     settings = obj;
 
     // Write to settings file
@@ -106,7 +111,7 @@ module.exports['/update-settings'] = function (body, res) {
             if (err) {
               console.log('2', err);
             } else {
-              res.send('true');
+              res.send(true);
             }
           });
         } else {
@@ -119,7 +124,7 @@ module.exports['/update-settings'] = function (body, res) {
             if (err) {
               console.log('3', err);
             } else {
-              res.send('true');
+              res.send(true);
             }
           });
 
@@ -129,6 +134,49 @@ module.exports['/update-settings'] = function (body, res) {
   });
 };
 
+module.exports['/password'] = function (body, res) {
+  if (settings) {
+    // Save local var
+    netid = settings.netid;
+
+    // Get from keychain
+    keychain.getPassword({
+      account: settings.netid,
+      service: 'Ezra'
+    }, function (err, pass) {
+      if (!err) {
+        password = pass;
+
+        res.send({
+          user: settings.netid,
+          password: password
+        });
+      }
+    });
+  }
+  jf.readFile(settings_file, function (err, obj) {
+    settings = obj;
+    if (!err) {
+      if (settings.netid && settings.remember) {
+        keychain.getPassword({
+          account: settings.netid,
+          service: 'Ezra'
+        }, function (err, pass) {
+          if (!err) {
+            password = pass;
+
+            res.send({
+              user: settings.netid,
+              password: password
+            });
+          }
+        });
+      }
+    }
+  });
+}
+
+
 module.exports['/information'] = function (body, res) {
   student
     .getInformation()
@@ -137,21 +185,12 @@ module.exports['/information'] = function (body, res) {
     });
 };
 
-
-// For testing
-module.exports['/hello'] = function (body, res) {
-  res.send('hello wordl'); // lol ajay. BRUH.
-};
-
 module.exports['/menus'] = function (body, res) {
-  console.log('calling redapi');
   rp('http://redapi-tious.rhcloud.com/dining/menu/ALL/ALL/LOCATIONS')
     .then(function (info) {
-      console.log('GOT THE MENUS');
       res.send(JSON.parse(info));
     })
     .catch(function (err) {
-      console.log('yo my b');
       console.trace(err);
     });
 };

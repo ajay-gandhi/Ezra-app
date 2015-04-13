@@ -1,5 +1,6 @@
 'use strict';
-/* global $, Messenger */
+
+/* Actions for login page */
 
 var netid;
 var login_result_delay = 1000,
@@ -7,16 +8,23 @@ var login_result_delay = 1000,
 
 $(document).ready(function () {
 
-  var app = window.coolio;
+  var app = window.messenger;
+
+  // Receive password from app if saved
+  app.receive('/password', function (creds) {
+    $('input#netid').val(creds.user);
+    $('input#password').val(creds.password);
+  });
 
   // Login actions
   $('button#login-button').click(function (e) {
     netid = $('input#netid').val();
-    $('input, button').blur();
 
     // Don't actually submit the form
     e.preventDefault();
 
+    // Disable everything
+    $('input, button').blur();
     $('button#login-button').prop('disabled', true);
     $('button#login-button').text('Logging in...');
 
@@ -25,34 +33,29 @@ $(document).ready(function () {
       password: $('input#password').val()
     };
 
-
     // Login procedure
-
     app.request('/login', data);
-
-    app.recieve('/login', function (success) {
+    app.receive('/login', function (success) {
 
       if (success) {
-
         // Login successful
         login_result(true, function () {
           $('div#login')
             .delay(500)
             .fadeOut(150, function () {
               // Tell backend to open index.html
-              app.request('login-successful', true);
+              app.request('/login-successful', true);
             });
         });
 
-
       } else {
-
         // Login failed
         login_result(false, function () {
           $('input#netid').focus();
           $('button#login-button').prop('disabled', false);
           $('button#login-button').text('Login');
         });
+
       }
     });
   });
@@ -64,6 +67,7 @@ $(document).ready(function () {
  *           [function] callback  - A function to call after all animations
  */
 var login_result = function (successful, callback) {
+  // Fade in cover
   $('div#login-cover')
     .css({
       display: 'block',
@@ -77,6 +81,7 @@ var login_result = function (successful, callback) {
         });
     });
 
+  // Slide check/cross
   $('div#login-result')
     .html( (successful) ? '&check;' : '&#9587;' )
     .css({

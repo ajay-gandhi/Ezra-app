@@ -8,7 +8,7 @@ if (typeof String.prototype.startsWith != 'function') {
   // see below for better implementation!
   String.prototype.startsWith = function (str){
     return this.indexOf(str) === 0;
-  };
+  }
 }
 
 /**
@@ -26,6 +26,9 @@ Response.prototype.send = function(body) {
     body : body
   });
 
+  console.log(msg);
+  console.log('\n\n\n\n');
+
   this.where.postMessage(msg);
 };
 
@@ -39,7 +42,6 @@ require('Common');
 
 application.exitAfterWindowsClose = true;
 application.name = 'My Program';
-
 
 /* The window */
 var win = new Window(); // initially hidden.
@@ -80,6 +82,9 @@ webview.addEventListener('message', function(msg) {
 webview.left = webview.right = webview.top = webview.bottom = 0;
 webview.location = 'app://html/login.html';
 win.appendChild(webview);
+
+// Fetch and send saved password if it exists
+// server['/password'](true, new Response('/password', webview));
 
 /* The toolbar */
 // var toolbar = new Toolbar();

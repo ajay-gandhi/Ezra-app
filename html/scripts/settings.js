@@ -5,8 +5,8 @@
 // Maintain a local copy of all settings 
 var settings = {
   remember: false,
-  id_image: false
-};
+  hide_id_image: false
+}
 
 var update_timeout;
 
@@ -17,7 +17,7 @@ $(document).ready(function () {
 
   // Fetch and update settings
   app.request('/settings', null);
-  app.recieve('/settings', function (data) {
+  app.receive('/settings', function (data) {
     $('div#toggle-remember').toggleClass('checked', data.remember);
     $('div#toggle-id-image').toggleClass('checked', data.hide_id_image);
   });

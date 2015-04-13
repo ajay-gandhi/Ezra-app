@@ -22,7 +22,7 @@ $(document).ready(function() {
 
   // Request and receive menus
   app.request('/menus', null);
-  app.recieve('/menus', function (data) {
+  app.receive('/menus', function (data) {
     // Iterate over each meal in each dining hall
     for (var location in data) {
       ['Breakfast', 'Brunch', 'Lunch', 'Dinner'].forEach(function (meal) {

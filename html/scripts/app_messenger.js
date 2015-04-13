@@ -85,6 +85,8 @@ var handle_message = function(message) {
     // Call handler
     this.listeners[msg.namespace](msg.body);
   } catch (e) {
+    console.log('Error:');
+    console.log(message.data);
     console.log(e);
   }
 }
@@ -95,9 +97,10 @@ var handle_message = function(message) {
  * @param {function} handler     The function to call when a message is
  *   received on the given namespace
  */
-Messenger.prototype.recieve = function(namespace, handler) {
+Messenger.prototype.receive = function(namespace, handler) {
+
   this.listeners[namespace] = handler;
-};
+}
 
 /**
  * Sends a message to the app. The response for request(x, _) should be expected
@@ -115,13 +118,8 @@ Messenger.prototype.request = function(namespace, body) {
     body : body
   });
 
-  if (!window.postMessageToHost) {
-    console.log('Not running on tint! Messages not supported');
-    return;
-  }
-
   // Send request
   window.postMessageToHost(msg);
-};
+}
 
 window.messenger = new Messenger();
