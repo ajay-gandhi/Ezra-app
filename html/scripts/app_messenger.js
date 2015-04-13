@@ -1,4 +1,5 @@
 'use strict';
+/* Handles contact between the app and the UI itself */
 /////////////////////////////////// LOGGING ////////////////////////////////////
 
 /**

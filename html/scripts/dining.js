@@ -1,5 +1,7 @@
 'use strict';
 
+/* Fetches dining menus and selects date for iframes */
+
 // Get and format date for embedded Google Cal
 var date = new Date();
 var today = '' + date.getFullYear();

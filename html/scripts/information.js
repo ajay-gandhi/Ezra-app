@@ -1,11 +1,8 @@
 'use strict';
-/* global $, Messenger */
 
-/*
- * Loads personal information about the student
- */
+/* Loads personal information about the student */
 
- var app = window.coolio;
+var app = window.messenger;
 
 $(document).ready(function () {
   app.request('/information', null);
@@ -54,20 +51,15 @@ $(document).ready(function () {
         '</div>';
     }
 
-      app.request('/settings', null);
-      app.recieve('/settings', function (data) {
+    // Need settings for ID image
+    app.request('/settings', null);
+    app.recieve('/settings', function (data) {
 
-        $('div#information-module')
-          .html(infoHTML);
+      $('div#information-module').html(infoHTML);
 
-        // Hide image if settings
-        if (data.id_image)
-          $('div#information-module img').parent().parent().hide();
-
-        // Hide id_image if settings
-        if (!data.id_image)
-          $('div#information img').hide();
-        
-      });
+      // Hide image if settings
+      if (data.id_image)
+        $('div#information-module img').parent().parent().hide();
+    });
   });
 });

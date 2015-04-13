@@ -1,9 +1,6 @@
 'use strict';
-/* global $ */
 
-/**
- * Handles the nav menu
- */
+/* Animates the navigation menu */
 
 $(document).ready(function () {
   // Hide and display navigation bar
