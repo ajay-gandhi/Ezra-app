@@ -5,8 +5,8 @@ var jf            = require('jsonfile'),
     rp            = require('request-promise'),
     keychain      = require('xkeychain');
 
-
-var settings_file = './settings.json';
+// Location of settings file in user's home dir
+var settings_file = process.env[(process.platform == 'win32') ? 'USERPROFILE' : 'HOME'] + '/.ezra-settings'
 
 // Keep netid and pw for keychain possibly
 var netid, password;
@@ -14,10 +14,8 @@ var netid, password;
 // Keep local copy of settings
 var settings;
 
-
 //Initialize the headless browser to speedup login
 var student = new StudentCenter();
-
 student
   .init()
   .then(function (sc_new) {
@@ -27,10 +25,10 @@ student
     console.trace(err);
   });
 
+
 // Login user
 module.exports['/login'] = function (body, res) {
   // Get the username and pw from the request
-  // 
   
   netid    = body.netid;
   password = body.password;
@@ -47,8 +45,7 @@ module.exports['/login'] = function (body, res) {
       // The login failed
       res.send(false);
     });
-};
-
+}
 
 module.exports['login-successful'] = function (body, res) {
   res.where.location = 'app://html/index.html';
@@ -79,6 +76,10 @@ module.exports['/update-settings'] = function (body, res) {
 
   // Update settings in file
   jf.readFile(settings_file, function(err, obj) {
+    var obj;
+    if (!obj) {
+      obj = {};
+    }
     // Update netid
     obj.netid = netid;
 
@@ -92,7 +93,7 @@ module.exports['/update-settings'] = function (body, res) {
     // Write to settings file
     jf.writeFile(settings_file, obj, function(err) {
       if (err) {
-        console.log(err);
+        console.log('1', err);
       } else {
 
         // Settings file updated, now update keychain
@@ -103,7 +104,7 @@ module.exports['/update-settings'] = function (body, res) {
             service: 'Ezra'
           }, function (err) {
             if (err) {
-              console.log(err);
+              console.log('2', err);
             } else {
               res.send('true');
             }
@@ -116,7 +117,7 @@ module.exports['/update-settings'] = function (body, res) {
             password: password
           }, function(err) {
             if (err) {
-              console.log(err);
+              console.log('3', err);
             } else {
               res.send('true');
             }
@@ -128,8 +129,6 @@ module.exports['/update-settings'] = function (body, res) {
   });
 };
 
-
-// Serve the student's personal information and student id image
 module.exports['/information'] = function (body, res) {
   student
     .getInformation()
@@ -137,7 +136,6 @@ module.exports['/information'] = function (body, res) {
       res.send(info);
     });
 };
-
 
 
 // For testing
@@ -148,12 +146,12 @@ module.exports['/hello'] = function (body, res) {
 module.exports['/menus'] = function (body, res) {
   console.log('calling redapi');
   rp('http://redapi-tious.rhcloud.com/dining/menu/ALL/ALL/LOCATIONS')
-  .then(function (info) {
-    console.log('GOT THE MENUS');
-    res.send(JSON.parse(info));
-  })
-  .catch(function (err) {
-    console.log('yo my b');
-    console.trace(err);
-  });
+    .then(function (info) {
+      console.log('GOT THE MENUS');
+      res.send(JSON.parse(info));
+    })
+    .catch(function (err) {
+      console.log('yo my b');
+      console.trace(err);
+    });
 };
