@@ -11,7 +11,7 @@ $(document).ready(function () {
   var app = window.messenger;
 
   // Receive password from app if saved
-  app.receive('/password', function (creds) {
+  app.receive('/pass', function (creds) {
     $('input#netid').val(creds.user);
     $('input#password').val(creds.password);
   });

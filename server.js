@@ -134,26 +134,7 @@ module.exports['/update-settings'] = function (body, res) {
   });
 };
 
-module.exports['/password'] = function (body, res) {
-  if (settings) {
-    // Save local var
-    netid = settings.netid;
-
-    // Get from keychain
-    keychain.getPassword({
-      account: settings.netid,
-      service: 'Ezra'
-    }, function (err, pass) {
-      if (!err) {
-        password = pass;
-
-        res.send({
-          user: settings.netid,
-          password: password
-        });
-      }
-    });
-  }
+module.exports['/pass'] = function (body, res) {
   jf.readFile(settings_file, function (err, obj) {
     settings = obj;
     if (!err) {

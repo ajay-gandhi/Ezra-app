@@ -86,7 +86,6 @@ var handle_message = function(message) {
     this.listeners[msg.namespace](msg.body);
   } catch (e) {
     console.log('Error:');
-    console.log(message.data);
     console.log(e);
   }
 }

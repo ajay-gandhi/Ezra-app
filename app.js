@@ -26,11 +26,8 @@ Response.prototype.send = function(body) {
     body : body
   });
 
-  console.log(msg);
-  console.log('\n\n\n\n');
-
   this.where.postMessage(msg);
-};
+}
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -84,7 +81,12 @@ webview.location = 'app://html/login.html';
 win.appendChild(webview);
 
 // Fetch and send saved password if it exists
-// server['/password'](true, new Response('/password', webview));
+webview.addEventListener('load', function() {
+  var url = webview.location;
+  if (url.indexOf('login.html', url.length - 10) !== -1) {
+    server['/pass'](null, new Response('/pass', webview));
+  }
+});
 
 /* The toolbar */
 // var toolbar = new Toolbar();
