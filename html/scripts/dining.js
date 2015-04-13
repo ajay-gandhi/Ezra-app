@@ -1,6 +1,6 @@
 'use strict';
-/* global $, Messenger */
 
+// Get and format date for embedded Google Cal
 var date = new Date();
 var today = '' + date.getFullYear();
 if (date.getMonth() + 1 < 10) {
@@ -10,24 +10,23 @@ if (date.getMonth() + 1 < 10) {
 }
 today += date.getDate();
 
-var app = window.coolio;
-
+var app = window.messenger;
 
 $(document).ready(function() {
 
+  // Add date to iframe sources
   var src = $('iframe').attr('src');
-  $('iframe')
-    .attr('src', src + '&mode=DAY&dates=' + today + '/' + today);
+  $('iframe').attr('src', src + '&mode=DAY&dates=' + today + '/' + today);
 
+  // Request and receive menus
   app.request('/menus', null);
   app.recieve('/menus', function (data) {
-    console.log('RECIEVED THE MENUS! ')
+    // Iterate over each meal in each dining hall
     for (var location in data) {
       ['Breakfast', 'Brunch', 'Lunch', 'Dinner'].forEach(function (meal) {
 
         $('ul[data-menu-for="'+ location +'"]')
           .append('<li><h3>' + meal + '</h3></li>');
-
 
         if (!data[location][meal]) return;
 
