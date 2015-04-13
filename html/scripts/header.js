@@ -13,4 +13,15 @@ $(document).ready(function () {
       .stop()
       .slideUp('fast');
   });
+
+  // Click events for navigation
+  $('div.nav-item').each(function (i) {
+    $(this).click(function () {
+      // animate to the module
+      $('div#module-group')
+        .animate({
+          left: i * $('div.module').width() * -1
+        });
+    });
+  });
 });
