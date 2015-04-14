@@ -76,23 +76,62 @@ webview.addEventListener('message', function(msg) {
   server[data.namespace](data.body, new Response(data.namespace, webview));
 });
 
-webview.left = webview.right = webview.top = webview.bottom = 0;
+webview.top = 0;
+webview.left = webview.right = webview.bottom = 0;
 webview.location = 'app://html/login.html';
 win.appendChild(webview);
 
-// Fetch and send saved password if it exists
+/* The toolbar */
+var schedule_button = new Button();
+    schedule_button.title = 'My Schedule';
+    schedule_button.width = 100;
+    schedule_button.height = 30;
+    schedule_button.top = -100;
+    schedule_button.left = 175;
+
+var info_button = new Button();
+    info_button.title = 'My Information';
+    info_button.width = 100;
+    info_button.height = 30;
+    info_button.top = -100;
+    info_button.left = 325;
+
+var dining_button = new Button();
+    dining_button.title = 'Dining';
+    dining_button.width = 100;
+    dining_button.height = 30;
+    dining_button.top = -100;
+    dining_button.left = 475;
+
+var settings_button = new Button();
+    settings_button.title = 'Settings';
+    settings_button.width = 100;
+    settings_button.height = 30;
+    settings_button.top = -100;
+    settings_button.left = 625;
+
+win.appendChild(schedule_button);
+win.appendChild(info_button);
+win.appendChild(dining_button);
+win.appendChild(settings_button);
+
 webview.addEventListener('load', function() {
+  // Fetch and send password when login loaded
   var url = webview.location;
   if (url.indexOf('login.html', url.length - 10) !== -1) {
     server['/pass'](null, new Response('/pass', webview));
+
+  } else {
+    // Make space for toolbar
+    webview.top = 50;
+
+    // Display buttons
+    schedule_button.top = 10;
+    info_button.top = 10;
+    dining_button.top = 10;
+    settings_button.top = 10;
   }
 });
-
-/* The toolbar */
-// var toolbar = new Toolbar();
-// toolbar.appendChild(new Button())
-// win.toolbar = toolbar;
-
 
 /* The menu */
 // I copied this from someplace. lol. I think the tests for tint acutally.

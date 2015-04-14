@@ -44,7 +44,7 @@ div#main {
 div#module-container {
   position: absolute;
   left: 5px;
-  top: 50px;
+  top: 25px;
   width: 890px;
   height: 550px;
   overflow: hidden;
