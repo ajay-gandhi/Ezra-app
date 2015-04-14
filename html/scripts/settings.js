@@ -3,12 +3,7 @@
 /* Fetches and enacts settings. Also requests updates */
 
 // Maintain a local copy of all settings 
-var settings = {
-  remember: false,
-  hide_id_image: false
-}
-
-var update_timeout;
+var settings;
 
 var app = window.messenger;
 
@@ -18,8 +13,7 @@ $(document).ready(function () {
   // Fetch and update settings
   app.request('/settings', null);
   app.receive('/settings', function (data) {
-    settings.remember      = data.remember;
-    settings.hide_id_image = data.hide_id_image;
+    settings = data;
     $('div#toggle-remember').toggleClass('checked', data.remember);
     $('div#toggle-id-image').toggleClass('checked', data.hide_id_image);
   });
@@ -52,7 +46,5 @@ var update_settings = function () {
   // Conduct update after 1 second to prevent multiple calls if numerous
   // settings are being updated. In this fashion, everything in the settings
   // object will be updated and the new object will be sent all at once.
-  update_timeout = window.setTimeout(function () {
-    app.request('/update-settings', settings);
-  }, 1000);
-};
+  app.request('/update-settings', settings);
+}
