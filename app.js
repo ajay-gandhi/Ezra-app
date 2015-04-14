@@ -1,6 +1,6 @@
 'use strict';
-/* global console, require, application, Window, Menu, MenuItem, 
-          MenuItemSeparator, process, WebView */
+/* global console, require, application, Window, Menu, MenuItem, Panel,
+          MenuItemSeparator, process, WebView, Button, ButtonGroup */
 
 // Needed for zombie to work. This is on harmony, which isn't enabled on default
 // tint compile apparently.
@@ -8,7 +8,7 @@ if (typeof String.prototype.startsWith != 'function') {
   // see below for better implementation!
   String.prototype.startsWith = function (str){
     return this.indexOf(str) === 0;
-  }
+  };
 }
 
 /**
@@ -27,7 +27,7 @@ Response.prototype.send = function(body) {
   });
 
   this.where.postMessage(msg);
-}
+};
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -43,8 +43,8 @@ application.name = 'My Program';
 /* The window */
 var win = new Window(); // initially hidden.
 win.visible = true;
-win.title = 'Some Title';
-// win.appearance = 'dark';
+win.title = 'Sha-boom';
+win.appearance = 'dark';
 win.canBeFullscreen = false;
 win.width = 900;
 win.height = 620;
@@ -134,10 +134,15 @@ var settings_button        = new Button();
       }));
     });
 
-win.appendChild(schedule_button);
-win.appendChild(info_button);
-win.appendChild(dining_button);
-win.appendChild(settings_button);
+var buttonGroup = new ButtonGroup();
+
+buttonGroup.appendChild(schedule_button);
+buttonGroup.appendChild(info_button);
+buttonGroup.appendChild(dining_button);
+buttonGroup.appendChild(settings_button);
+
+buttonGroup.center = '100%';
+buttonGroup.top = 2;
 
 webview.addEventListener('load', function() {
   // Fetch and send password when login loaded
@@ -147,13 +152,10 @@ webview.addEventListener('load', function() {
 
   } else {
     // Make space for toolbar
-    webview.top = 50;
+    webview.top = 32;
 
-    // Display buttons
-    schedule_button.top = 10;
-    info_button.top = 10;
-    dining_button.top = 10;
-    settings_button.top = 10;
+    // Show toolbar button group
+    win.appendChild(buttonGroup);
   }
 });
 
@@ -228,6 +230,8 @@ editSubmenu.appendChild(new MenuItem('Cut', 'x'))
   .addEventListener('click', function() { application.cut(); });
 editSubmenu.appendChild(new MenuItem('Paste', 'p'))
   .addEventListener('click', function() { application.paste(); });
+editSubmenu.appendChild(new MenuItem('Select All', 'a'))
+  .addEventListener('click', function() { application.selectAll(); });
 editMenu.submenu = editSubmenu;
 
 var windowSubmenu = new Menu('Window');
@@ -249,3 +253,4 @@ helpSubmenu.appendChild(new MenuItem('License', ''))
 helpMenu.submenu = helpSubmenu;
 
 win.menu = mainMenu;
+
