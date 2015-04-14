@@ -17,6 +17,10 @@ module.exports = (function () {
     this.password;
   }
 
+  /**
+   * Initializes the browser by visiting the main studentcenter page
+   * Returns: [Promise] The newly initialized StudentCenter object
+   */
   StudentCenter.prototype.init = function () {
     var self = this;
     var browser = self.browser;
