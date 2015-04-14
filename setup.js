@@ -1,6 +1,10 @@
 'use strict';
+/* global console, module, require, application, Menu, MenuItem, Panel,
+          MenuItemSeparator, process, WebView, Button, ButtonGroup */
 
 /* Handles the auxiliary setup of the app, such as the toolbar and menus */
+
+var screens = require('Screens');
 
 function Setup(w, view) {
   this.w = w;
@@ -98,7 +102,7 @@ Setup.prototype.createToolbar = function () {
       win.appendChild(buttonGroup);
     }
   });
-}
+};
 
 /**
  * Creates the menus in the menu bar for the app. Mostly copied from the tests
@@ -126,8 +130,8 @@ Setup.prototype.createMenus = function() {
   appleSubmenu.appendChild(new MenuItem('About '+application.name, ''))
     .addEventListener('click', function() {
       // Display about window
+      var active = screens.active;
       var about_panel = new Panel();
-          about_panel.visible = true;
           about_panel.title = 'About ' + application.name;
           about_panel.appearance = 'dark';
           about_panel.canBeFullscreen = false;
@@ -140,6 +144,9 @@ Setup.prototype.createMenus = function() {
       var about_webview = new WebView();
           about_webview.location = 'app://html/about.html';
           about_panel.appendChild(about_webview);
+
+      about_panel.visible = true;
+
     });
   appleSubmenu.appendChild(new MenuItemSeparator());
   appleSubmenu.appendChild(new MenuItem('Hide '+application.name, 'h'))
@@ -196,8 +203,8 @@ Setup.prototype.createMenus = function() {
   helpMenu.submenu = helpSubmenu;
 
   win.menu = mainMenu; 
-}
+};
 
 module.exports = (function (w, win) {
   return new Setup(w, win);
-})
+});

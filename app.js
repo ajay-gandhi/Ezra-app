@@ -1,6 +1,5 @@
 'use strict';
-/* global console, require, application, Window, Menu, MenuItem, Panel,
-          MenuItemSeparator, process, WebView, Button, ButtonGroup */
+/* global console, require, application, Window, WebView */
 
 // Needed for zombie to work. This is on harmony, which isn't enabled on default
 // tint compile apparently.
@@ -42,7 +41,6 @@ application.name = 'My Program';
 
 /* The window */
 var win = new Window(); // initially hidden.
-win.visible = true;
 win.title = 'Sha-boom';
 win.appearance = 'dark';
 win.canBeFullscreen = false;
@@ -84,3 +82,6 @@ win.appendChild(webview);
 var setup = require('./setup')(win, webview);
     setup.createToolbar();
     setup.createMenus();
+
+win.visible = true;
+
