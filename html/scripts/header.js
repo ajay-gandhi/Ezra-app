@@ -3,6 +3,9 @@
 /* Animates the navigation menu */
 
 $(document).ready(function () {
+
+  var app = window.messenger;
+
   // Hide and display navigation bar
   $('header, div#navigation').hover(function () {
     $('div#navigation')
@@ -14,14 +17,12 @@ $(document).ready(function () {
       .slideUp('fast');
   });
 
-  // Click events for navigation
-  $('div.nav-item').each(function (i) {
-    $(this).click(function () {
-      // animate to the module
-      $('div#module-group')
-        .animate({
-          left: i * $('div.module').width() * -1
-        });
-    });
+  // Receive navigation requests
+  app.receive('/navigation', function (i) {
+    // animate to the proper module
+    $('div#module-group')
+      .animate({
+        left: i * $('div.module').width() * -1
+      });
   });
 });

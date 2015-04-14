@@ -44,7 +44,7 @@ application.name = 'My Program';
 var win = new Window(); // initially hidden.
 win.visible = true;
 win.title = 'Some Title';
-win.appearance = 'dark';
+// win.appearance = 'dark';
 win.canBeFullscreen = false;
 win.width = 900;
 win.height = 620;
@@ -82,33 +82,57 @@ webview.location = 'app://html/login.html';
 win.appendChild(webview);
 
 /* The toolbar */
-var schedule_button = new Button();
-    schedule_button.title = 'My Schedule';
-    schedule_button.width = 100;
+var schedule_button        = new Button();
+    schedule_button.title  = 'My Schedule';
+    schedule_button.width  = 100;
     schedule_button.height = 30;
-    schedule_button.top = -100;
-    schedule_button.left = 175;
+    schedule_button.top    = -100;
+    schedule_button.left   = 175;
+    schedule_button.addEventListener('click', function () {
+      webview.postMessage(JSON.stringify({
+        namespace : '/navigation',
+        body : 0
+      }));
+    });
 
-var info_button = new Button();
-    info_button.title = 'My Information';
-    info_button.width = 100;
+var info_button        = new Button();
+    info_button.title  = 'My Information';
+    info_button.width  = 100;
     info_button.height = 30;
-    info_button.top = -100;
-    info_button.left = 325;
+    info_button.top    = -100;
+    info_button.left   = 325;
+    info_button.addEventListener('click', function () {
+      webview.postMessage(JSON.stringify({
+        namespace : '/navigation',
+        body : 1
+      }));
+    });
 
-var dining_button = new Button();
-    dining_button.title = 'Dining';
-    dining_button.width = 100;
+var dining_button        = new Button();
+    dining_button.title  = 'Dining';
+    dining_button.width  = 100;
     dining_button.height = 30;
-    dining_button.top = -100;
-    dining_button.left = 475;
+    dining_button.top    = -100;
+    dining_button.left   = 475;
+    dining_button.addEventListener('click', function () {
+      webview.postMessage(JSON.stringify({
+        namespace : '/navigation',
+        body : 2
+      }));
+    });
 
-var settings_button = new Button();
-    settings_button.title = 'Settings';
-    settings_button.width = 100;
+var settings_button        = new Button();
+    settings_button.title  = 'Settings';
+    settings_button.width  = 100;
     settings_button.height = 30;
-    settings_button.top = -100;
-    settings_button.left = 625;
+    settings_button.top    = -100;
+    settings_button.left   = 625;
+    settings_button.addEventListener('click', function () {
+      webview.postMessage(JSON.stringify({
+        namespace : '/navigation',
+        body : 3
+      }));
+    });
 
 win.appendChild(schedule_button);
 win.appendChild(info_button);
