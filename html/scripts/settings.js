@@ -3,10 +3,7 @@
 /* Fetches and enacts settings. Also requests updates */
 
 // Maintain a local copy of all settings 
-var settings = {
-  remember: false,
-  hide_id_image: false
-}
+var settings;
 
 var app = window.messenger;
 

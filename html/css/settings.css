@@ -17,16 +17,16 @@ div.settings-option {
   padding-left: 10px;
 }
 
-div.checked {
-  background-color: #FF0000;
-  border: 1px solid green;
-}
 div.toggle-button {
   display: inline-block;
-  width: 25px;
-  height: 25px;
+  width: 20px;
+  height: 20px;
   padding: 0px;
-  border: 2px solid #FF0000;
+  border: 1px solid #AAAAAA;
   border-radius: 5px;
   cursor: pointer;
+}
+div.checked {
+  background-color: #3083FA;
+  border: 1px solid #3083FA;
 }
