@@ -71,24 +71,11 @@ Setup.prototype.createToolbar = function () {
       buttonGroup.appendChild(info_button);
       buttonGroup.appendChild(dining_button);
       buttonGroup.appendChild(settings_button);
+      buttonGroup.selected = 0;
       buttonGroup.center = '100%';
       buttonGroup.top = 2;
 
   // Move the buttons into place when index.html loaded
-  webview.addEventListener('load', function() {
-    var url = webview.location;
-    if (url.indexOf('index.html', url.length - 10) !== -1) {
-      // Make space for toolbar
-      webview.top = 50;
-
-      // Display buttons
-      schedule_button.top = 10;
-      info_button.top = 10;
-      dining_button.top = 10;
-      settings_button.top = 10;
-    }
-  });
-
   webview.addEventListener('load', function() {
     var url = webview.location;
     if (url.indexOf('login.html', url.length - 10) === -1) {
