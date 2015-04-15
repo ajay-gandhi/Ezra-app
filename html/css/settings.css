@@ -2,6 +2,9 @@ div#settings-module {
   padding: 20px 0px;
 }
 
+div.settings-group {
+  cursor: default;
+}
 div.settings-label {
   display: inline-block;
   text-align: right;
@@ -15,18 +18,4 @@ div.settings-option {
   width: 39%;
   height: 50px;
   padding-left: 10px;
-}
-
-div.toggle-button {
-  display: inline-block;
-  width: 20px;
-  height: 20px;
-  padding: 0px;
-  border: 1px solid #AAAAAA;
-  border-radius: 5px;
-  cursor: pointer;
-}
-div.checked {
-  background-color: #3083FA;
-  border: 1px solid #3083FA;
 }

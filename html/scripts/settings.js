@@ -14,15 +14,15 @@ $(document).ready(function () {
   app.request('/settings', null);
   app.receive('/settings', function (data) {
     settings = data;
-    $('div#toggle-remember').toggleClass('checked', data.remember);
-    $('div#toggle-id-image').toggleClass('checked', data.hide_id_image);
+    $('input#toggle-remember-box').prop('checked', data.remember);
+    $('input#toggle-id-image-box').prop('checked', data.hide_id_image);
   });
 
   // Click event for remember me
   $('div#toggle-remember')
     .click(function () {
       settings.remember = !settings.remember;
-      $(this).toggleClass('checked');
+      $('input#toggle-remember-box').prop('checked', settings.remember);
       update_settings();
     });
 
@@ -30,7 +30,7 @@ $(document).ready(function () {
   $('div#toggle-id-image')
     .click(function () {
       settings.hide_id_image = !settings.hide_id_image;
-      $(this).toggleClass('checked');
+      $('input#toggle-id-image-box').prop('checked', settings.hide_id_image);
 
       // Show or hide id image
       $('div#information-module img').parent().parent().toggle();
@@ -43,8 +43,6 @@ $(document).ready(function () {
  * Conducts the AJAX call to the server to update the settings file
  */
 var update_settings = function () {
-  // Conduct update after 1 second to prevent multiple calls if numerous
-  // settings are being updated. In this fashion, everything in the settings
-  // object will be updated and the new object will be sent all at once.
   app.request('/update-settings', settings);
+  app.receive('/update-settings', function () {});
 }

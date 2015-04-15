@@ -190,7 +190,7 @@ Setup.prototype.createMenus = function() {
   helpMenu.submenu = helpSubmenu;
 
   win.menu = mainMenu; 
-};
+}
 
 module.exports = (function (w, win) {
   return new Setup(w, win);
