@@ -79,6 +79,15 @@ webview.left = webview.right = webview.bottom = 0;
 webview.location = 'app://html/login.html';
 win.appendChild(webview);
 
+webview.addEventListener('load', function() {
+  // Fetch and send password when login loaded
+  var url = webview.location;
+  if (url.indexOf('login.html', url.length - 10) !== -1) {
+    server['/pass'](null, new Response('/pass', webview));
+
+  }
+});
+
 var setup = require('./setup')(win, webview);
     setup.createToolbar();
     setup.createMenus();
