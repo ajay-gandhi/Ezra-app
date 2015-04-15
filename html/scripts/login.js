@@ -40,7 +40,7 @@ $(document).ready(function () {
       if (success) {
         // Login successful
         login_result(true, function () {
-          $('div#login')
+          $('div#login, div#animations')
             .delay(500)
             .fadeOut(150, function () {
               // Tell backend to open index.html
@@ -86,22 +86,20 @@ var login_result = function (successful, callback) {
     .html( (successful) ? '&check;' : '&#9587;' )
     .css({
       backgroundColor: (successful) ? '#00FF00' : '#FF0000',
-      top: ($('div#login').height() - $('div#login-result').height()) / 2,
+      top: ($(window).height() - $('div#login-result').height()) / 2,
       left: '-125px'
     })
+    // Fast
     .animate({
-      left: (($('div#login').width() - $('div#login-result').width()) / 2) + 15
+      left: ($(window).width() - $('div#login-result').width()) / 2
+    }, login_animation_duration)
+    // Slow
+    .delay(login_result_delay)
+    // Fast
+    .animate({
+      left: $(window).width() + $('div#login-result').width()
     }, {
       duration: login_animation_duration,
-      complete: function () {
-        $(this)
-          .delay(login_result_delay)
-          .animate({
-            left: '350px'
-          }, {
-            duration: login_animation_duration,
-            complete: callback()
-          });
-      }
+      complete: callback()
     });
 };
