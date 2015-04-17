@@ -1,6 +1,6 @@
 var Zombie  = require('zombie'),
     Promise = require('es6-promise').Promise,
-    request = require('request');
+    rp = require('request-promise');
 
 var urls = {
   main: 'http://studentcenter.cornell.edu',
@@ -328,106 +328,104 @@ module.exports = (function () {
 
           // Now get the image and send it base64-encoded
           // See https://gist.github.com/hackable/1294667
-          request({
+          return rp({
             uri: image_url,
-            encoding: 'binary'
-          }, function (error, response, body) {
-            if (!error && response.statusCode == 200) {
+            encoding: 'binary',
+            resolveWithFullResponse: true
+          });
+        })
+        .then(function (response) {
+          var body = response.body;
+          var data_uri_prefix = 'data:' + response.headers['content-type'] + ';base64,';
 
-              var data_uri_prefix = 'data:' + response.headers['content-type'] + ';base64,';
+          // Decode the binary image
+          var image = new Buffer(body, 'binary').toString('base64');
 
-              // Decode the binary image
-              var image = new Buffer(body, 'binary').toString('base64');
+          info.image = data_uri_prefix + image;
 
-              info.image = data_uri_prefix + image;
+          /**************************/
+          /** Get account balances **/
+          /**************************/
+          var id;
+          browser.runScripts = false;
 
-              /**************************/
-              /** Get account balances **/
-              /**************************/
-              var id;
-              browser.runScripts = false;
+          return browser.visit(urls.campuslife);
+        })
+        .then(function() {
+          // Fill login info
+          browser
+            .fill('loginphrase', info.student_id)
+            .fill('password', self.password);
 
-              browser
-                .visit(urls.campuslife)
-                .then(function() {
-                  // Fill login info
-                  browser
-                    .fill('loginphrase', info.student_id)
-                    .fill('password', self.password);
+          return browser.pressButton('input[type="image"]');
+        })
+        .then(function () {
 
-                  return browser.pressButton('input[type="image"]');
-                })
-                .then(function () {
+          var err = browser.query('font.error');
+          if (err && err.textContent.trim().indexOf('Invalid') >= 0) {
+            // Password not accepted
+            // Just return regular info
+            info.login = false;
 
-                  var err = browser.query('font.error');
-                  if (err && err.textContent.trim().indexOf('Invalid') >= 0) {
-                    // Password not accepted
-                    // Just return regular info
-                    info.login = false;
+            // Reset
+            browser.runScripts = true;
+            browser.visit(urls.main);
+
+            resolve(info);
+
+          } else {
+            // Result is a JavaScript redirect, but runScripts = false
+            // Extract URL and manually redirect
+            var rgx = /'(.*?)'/i;
+            var text = browser.text('body');
+
+            var url = text.match(rgx)[0];
+            url = url.substr(1, url.length - 2);
+
+            id = url;
+
+            browser
+              .visit(urls.campuslife + url)
+              .then(function () {
+                // Now at intermediate login page
+                // Mimic actions conducted by the JS on this page
+                var ePos = id.indexOf('=');
+                var aPos = id.indexOf('&');
+                id = id.substring(ePos + 1, aPos);
+
+                return login_check(id, 0);
+              })
+              .then(function () {
+                // Get info
+                browser
+                  .visit(urls.campuslife + '/index.php?skey=' + id + '&cid=7&')
+                  .then(function () {
+
+                    // Get all the <b> tags in mainbody, one for each account
+                    var tbl = browser.query('div#mainbody').children[1];
+                    var bs = tbl.getElementsByTagName('b');
+
+                    info.citybucks = bs[0].textContent.substr(9).trim();
+                    info.brbs      = bs[1].textContent.substr(9).trim();
+                    info.laundry   = bs[2].textContent.substr(9).trim();
 
                     // Reset
                     browser.runScripts = true;
                     browser.visit(urls.main);
 
                     resolve(info);
-                    return;
+                  });
+              })
+              .catch(function () {
+                // Login failed for some reason, so ignore this portion
 
-                  } else {
-                    // Result is a JavaScript redirect, but runScripts = false
-                    // Extract URL and manually redirect
-                    var rgx = /'(.*?)'/i;
-                    var text = browser.text('body');
+                // Reset
+                browser.runScripts = true;
+                browser.visit(urls.main);
 
-                    var url = text.match(rgx)[0];
-                    url = url.substr(1, url.length - 2);
-
-                    id = url;
-
-                    browser
-                      .visit(urls.campuslife + url)
-                      .then(function () {
-                        // Now at intermediate login page
-                        // Mimic actions conducted by the JS on this page
-                        var ePos = id.indexOf('=');
-                        var aPos = id.indexOf('&');
-                        id = id.substring(ePos + 1, aPos);
-
-                        return login_check(id, 0);
-                      })
-                      .then(function () {
-                        // Get info
-                        browser
-                          .visit(urls.campuslife + '/index.php?skey=' + id + '&cid=7&')
-                          .then(function () {
-
-                            // Get all the <b> tags in mainbody, one for each account
-                            var tbl = browser.query('div#mainbody').children[1];
-                            var bs = tbl.getElementsByTagName('b');
-
-                            info.citybucks = bs[0].textContent.substr(9).trim();
-                            info.brbs      = bs[1].textContent.substr(9).trim();
-                            info.laundry   = bs[2].textContent.substr(9).trim();
-
-                            // Reset
-                            browser.runScripts = true;
-                            browser.visit(urls.main);
-
-                            resolve(info);
-                          });
-                      })
-                      .catch(function () {
-                        // Login failed for some reason, so ignore this portion
-
-                        // Reset
-                        browser.runScripts = true;
-                        browser.visit(urls.main);
-
-                        resolve(info);
-                      });
-                  }
-                });
-            }
-          }); 
+                resolve(info);
+              });
+          }
         });
     });
   }
@@ -445,30 +443,31 @@ module.exports = (function () {
  */
 var login_check = function (id, count) {
   return new Promise(function (resolve, reject) {
-    request(urls.campuslife + '/login-check.php?skey=' + id, function (e, r, b) {
-      // If tried 4 times, quit
-      if (count >= 4) {
-        reject(false);
-      }
+    rp(urls.campuslife + '/login-check.php?skey=' + id)
+      .then(function (b) {
+        // If tried 4 times, quit
+        if (count >= 4) {
+          reject(false);
+        }
 
-      // Check if the XML message = 1 or not
-      if ((b.split('1').length - 1) != 2) {
-        // Login has not been accepted yet, so try again in 0.5s
-        setTimeout(function () {
-          count++;
-          login_check(id, count)
-            .then(function () {
-              resolve(true);
-            })
-            .catch(function () {
-              reject(false);
-            });
-        }, 500);
+        // Check if the XML message = 1 or not
+        if ((b.split('1').length - 1) != 2) {
+          // Login has not been accepted yet, so try again in 0.5s
+          setTimeout(function () {
+            count++;
+            login_check(id, count)
+              .then(function () {
+                resolve(true);
+              })
+              .catch(function () {
+                reject(false);
+              });
+          }, 500);
 
-      } else {
-        // Login accepted by their server, return true
-        resolve(true);
-      }
-    });
+        } else {
+          // Login accepted by their server, return true
+          resolve(true);
+        }
+      });
   });
 }
