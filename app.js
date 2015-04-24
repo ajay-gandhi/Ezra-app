@@ -31,6 +31,9 @@ Response.prototype.send = function(body) {
 
 ////////////////////////////////////////////////////////////////////////////////
 
+var jf = require('jsonfile'),
+    rp = require('request-promise');
+
 var server = require('./server');
 
 // Includes Tint's API, and sets up the runtime bridge.
@@ -79,12 +82,36 @@ webview.left = webview.right = webview.bottom = 0;
 webview.location = 'app://html/login.html';
 win.appendChild(webview);
 
+// Read remote package.json to see if out of date
+jf.readFile(__dirname + '/package.json', function(err, obj) {
+  var dialog_content = 'It looks like your version of Ezra is out of date. ' +
+    'Update to fix errors and get awesome new features! You can update by ' +
+    'downloading the new version from http://ajay-gandhi.github.io/Ezra-app';
+
+  rp('https://raw.githubusercontent.com/ajay-gandhi/Ezra-app/master/package.json')
+  .then(function (body) {
+    if (JSON.parse(body).version !== obj.version) {
+      // Must update
+      var update_required = new Dialog();
+          update_required.icon       = 'caution';
+          update_required.mainbutton = 'Okay';
+          update_required.message    = dialog_content;
+          update_required.title      = 'Update Required';
+
+      update_required.open();
+
+      update_required.addEventListener('click', function (which) {
+        process.exit(0);
+      });
+    }
+  });
+});
+
 webview.addEventListener('load', function() {
   // Fetch and send password when login loaded
   var url = webview.location;
   if (url.indexOf('login.html', url.length - 10) !== -1) {
     server['/pass'](null, new Response('/pass', webview));
-
   }
 });
 
