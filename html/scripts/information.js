@@ -33,22 +33,34 @@ $(document).ready(function () {
           '<div id="diff-pwd">' +
           'Your password to card.campuslife.cornell.edu differs from your ' +
           'NetID password, so we can\'t get your dining information.' +
+          '</div>' +
         '</div>';
 
     } else {
-      infoHTML += '' +
-        '<div class="information-group">' +
-          '<div class="information-label">Big Red Bucks Balance</div>' +
-          '<div class="information-option">$' + data.brbs + '</div>' +
-        '</div>' +
-        '<div class="information-group">' +
-          '<div class="information-label">Laundry Balance</div>' +
-          '<div class="information-option">$' + data.laundry + '</div>' +
-        '</div>' +
-        '<div class="information-group">' +
-          '<div class="information-label">CityBucks Balance</div>' +
-          '<div class="information-option">$' + data.citybucks + '</div>' +
-        '</div>';
+      if (!data.brbs) {
+        infoHTML += '' +
+          '<div class="information-group">' +
+            '<div id="diff-pwd">' +
+            'There was an error while getting your dining information.' +
+            'Try restarting the app 💸' +
+            '</div>' +
+          '</div>';
+
+      } else {
+        infoHTML += '' +
+          '<div class="information-group">' +
+            '<div class="information-label">Big Red Bucks Balance</div>' +
+            '<div class="information-option">$' + data.brbs + '</div>' +
+          '</div>' +
+          '<div class="information-group">' +
+            '<div class="information-label">Laundry Balance</div>' +
+            '<div class="information-option">$' + data.laundry + '</div>' +
+          '</div>' +
+          '<div class="information-group">' +
+            '<div class="information-label">CityBucks Balance</div>' +
+            '<div class="information-option">$' + data.citybucks + '</div>' +
+          '</div>';
+        }
     }
 
     // Need settings for ID image
