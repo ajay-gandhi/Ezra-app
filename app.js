@@ -37,11 +37,11 @@ var server = require('./server');
 require('Common'); 
 
 application.exitAfterWindowsClose = true;
-application.name = 'My Program';
+application.name = 'Ezra';
 
 /* The window */
 var win = new Window(); // initially hidden.
-win.title = 'Sha-boom';
+win.title = 'Ezra';
 win.appearance = 'dark';
 win.canBeFullscreen = false;
 win.width = 900;
