@@ -105,9 +105,9 @@ header h2 {
 a.button {
   display: block;
   float: left;
-  width: 179px;
+  width: 170px;
   padding: 12px 8px 12px 8px;
-  margin-right: 14px;
+  margin-right: 18px;
   font-size: 15px;
   font-weight: bold;
   line-height: 25px;
@@ -152,11 +152,11 @@ a.button span {
   padding-left: 50px;
 }
 
-#download-zip span {
-  background: transparent url(../images/zip-icon.png) 12px 50% no-repeat;
+#download-apple {
+  background: transparent url(../images/apple-icon.png) 20px 40% no-repeat;
 }
-#download-tar-gz span {
-  background: transparent url(../images/tar-gz-icon.png) 12px 50% no-repeat;
+#download-windows {
+  background: transparent url(../images/windows-icon.png) 20px 50% no-repeat;
 }
 #view-on-github span {
   background: transparent url(../images/octocat-icon.png) 12px 50% no-repeat;
