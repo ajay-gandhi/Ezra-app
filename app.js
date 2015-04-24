@@ -31,8 +31,9 @@ Response.prototype.send = function(body) {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-var jf = require('jsonfile'),
-    rp = require('request-promise');
+var jf   = require('jsonfile'),
+    rp   = require('request-promise'),
+    open = require('open');
 
 var server = require('./server');
 
@@ -92,15 +93,21 @@ jf.readFile(__dirname + '/package.json', function(err, obj) {
   .then(function (body) {
     if (JSON.parse(body).version !== obj.version) {
       // Must update
-      var update_required = new Dialog();
+      var update_required            = new Dialog();
           update_required.icon       = 'caution';
-          update_required.mainbutton = 'Okay';
+          update_required.mainbutton = 'Take me there';
+          update_required.auxbutton  = 'Okay';
           update_required.message    = dialog_content;
           update_required.title      = 'Update Required';
 
       update_required.open();
 
       update_required.addEventListener('click', function (which) {
+
+        // Open the website
+        if (which === 'main')
+          open('http://ajay-gandhi.github.io/Ezra-app');
+
         process.exit(0);
       });
     }

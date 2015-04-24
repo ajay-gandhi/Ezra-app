@@ -22,6 +22,7 @@
   "dependencies": {
     "es6-promise": "^2.0.1",
     "jsonfile": "^2.0.0",
+    "open": "0.0.5",
     "request-promise": "^0.4.0",
     "xkeychain": "0.0.5",
     "zombie": "^4.0.5"
