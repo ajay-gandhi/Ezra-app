@@ -56,10 +56,17 @@ gulp.task('compile-windows', ['remove-non-app-deps'], function (next) {
 
 // Compile app for all platforms
 gulp.task('compile-all', ['remove-non-app-deps'], function (next) {
+  // Prints phases of tntbuild process
+  var phases = ['Cleaning', 'Validating', 'Packaging', 'Linking'],
+      phase  = -1;
+
   var compile_all = spawn('tntbuild', ['--clean', './make/package.json']);
 
   compile_all.stdout.on('data', function (chunk) {
-    console.log(chunk.toString());
+    if (phase != 3 && chunk.toString().indexOf(phases[phase + 1].toLowerCase()) != -1) {
+      phase++;
+      console.log('tntbuild:', phases[phase] + '...');
+    }
   });
 
   compile_all.on('close', function () {
