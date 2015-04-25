@@ -1,4 +1,6 @@
-body {}
+body {
+  overflow: hidden;
+}
 
 header {
   -webkit-app-region: drag;
