@@ -1,4 +1,4 @@
 node_modules/
-atom.app/
+build/
 npm-debug.log
 settings.json
