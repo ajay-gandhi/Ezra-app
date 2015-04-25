@@ -12,7 +12,9 @@ var urls = {
 module.exports = (function () {
 
   function StudentCenter() {
-    this.browser = new Zombie();
+    this.browser = new Zombie({
+      maxWait: 3000
+    });
     this.netid;
     this.password;
   }
