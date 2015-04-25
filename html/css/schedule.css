@@ -81,7 +81,7 @@ div#sidebar {
   z-index: 51;
   width: 150px;
   height: 550px;
-  border-left: 2px solid #BBBBBB;
+  border-left: 1px solid #DDDDDD;
   background-color: #FFFFFF;
 }
 
