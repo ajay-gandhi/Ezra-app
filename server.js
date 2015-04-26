@@ -166,6 +166,9 @@ module.exports['/information'] = function (body, res) {
     });
 };
 
+/**
+ * Gets menu informaiton. Sends it to webview.
+ */
 module.exports['/menus'] = function (body, res) {
   rp('http://redapi-tious.rhcloud.com/dining/menu/ALL/ALL/LOCATIONS')
     .then(function (info) {
