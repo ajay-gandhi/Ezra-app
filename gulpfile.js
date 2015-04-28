@@ -87,7 +87,7 @@ gulp.task('compile-all', ['remove-non-app-deps'], function (next) {
     // Return from task
     next();
   });
-// });
+});
 
 // Delete subdirs
 gulp.task('clean', ['compile-all'], function (next) {
