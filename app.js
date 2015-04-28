@@ -1,14 +1,18 @@
 'use strict';
 /* global console, require, application, Window, WebView */
 
-// Needed for zombie to work. This is on harmony, which isn't enabled on default
-// tint compile apparently.
+/**
+ * Needed for zombie to work. This is on harmony, which isn't enabled on default
+ * tint compile apparently.
+ */
 if (typeof String.prototype.startsWith != 'function') {
   // see below for better implementation!
   String.prototype.startsWith = function (str){
     return this.indexOf(str) === 0;
   };
 }
+
+/////////////////////////////////// Response ///////////////////////////////////
 
 /**
  * Sends a message to given namespace. 
@@ -28,8 +32,7 @@ Response.prototype.send = function(body) {
   this.where.postMessage(msg);
 };
 
-
-////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////// Setup. ////////////////////////////////////
 
 var jf   = require('jsonfile'),
     rp   = require('request-promise'),
@@ -61,27 +64,46 @@ win.y = (active.bounds.height / 2) - 310;
 
 /* The web view. */
 var webview = new WebView();
+    webview.top = 0;
+    webview.left = webview.right = webview.bottom = 0;
+    webview.location = 'app://html/login.html';
+win.appendChild(webview);
 
 webview.addEventListener('message', function(msg) {
   var data = JSON.parse(msg);
   
-  if (!data.namespace)
+  if (!data.namespace) {
     console.trace('Message has no namespace. Plz.');
-  
-  if (!data.body) 
+    return;
+  }
+    
+  if (!data.body) {
     console.trace('Message has no body. Plz.');
+    return;
+  }
   
-  if (!server[data.namespace]) 
+  if (!server[data.namespace]) {
     console.trace('No action for namespace', data.namespace);
+    return;
+  }
   
   // Server has all namespace actions.
   server[data.namespace](data.body, new Response(data.namespace, webview));
 });
 
-webview.top = 0;
-webview.left = webview.right = webview.bottom = 0;
-webview.location = 'app://html/login.html';
-win.appendChild(webview);
+// Fetch and send password when login loaded
+webview.addEventListener('load', function() {
+  var url = webview.location;
+  if (url.indexOf('login.html', url.length - 10) !== -1) {
+    server['/pass'](null, new Response('/pass', webview));
+  }
+});
+
+var setup = require('./setup')(win, webview);
+    setup.createToolbar();
+    setup.createMenus();
+
+//////////////////////////////////// Update ////////////////////////////////////
 
 // Read remote package.json to see if out of date
 jf.readFile(__dirname + '/package.json', function(err, obj) {
