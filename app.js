@@ -51,7 +51,7 @@ win.canBeFullscreen = false;
 win.width = 900;
 win.height = 620;
 win.animateOnSizeChange = true;
-// win.resizable = false;
+win.resizable = false;
 
 // Center window
 var screens = require('Screens');
@@ -127,4 +127,3 @@ var setup = require('./setup')(win, webview);
     setup.createMenus();
 
 win.visible = true;
-

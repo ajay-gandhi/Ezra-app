@@ -28,11 +28,18 @@ gulp.task('remove-non-app-deps', ['copy'], function (next) {
 
 // Compile OS X app
 gulp.task('compile-osx', ['remove-non-app-deps'], function (next) {
+  // Prints phases of tntbuild process
+  var phases = ['Cleaning', 'Validating', 'Packaging', 'Linking'],
+      phase  = -1;
+
   var compile_mac = spawn('tntbuild', ['--clean', '--no-windows-build', './make/package.json']);
 
-  // compile_mac.stdout.on('data', function (chunk) {
-  //   console.log(chunk.toString());
-  // });
+  compile_mac.stdout.on('data', function (chunk) {
+    if (phase != 3 && chunk.toString().indexOf(phases[phase + 1].toLowerCase()) != -1) {
+      phase++;
+      console.log(phases[phase] + '...');
+    }
+  });
 
   compile_mac.on('close', function () {
     // Return from task
@@ -41,12 +48,19 @@ gulp.task('compile-osx', ['remove-non-app-deps'], function (next) {
 });
 
 // Compile Windows app
-gulp.task('compile-windows', ['remove-non-app-deps'], function (next) {
-  var compile_win = spawn('tntbuild', ['--clean', '--no-osx-build', './make/package.json']);
+gulp.task('compile-windows', ['compile-osx'], function (next) {
+  // Prints phases of tntbuild process
+  var phases = ['Validating', 'Linking'],
+      phase  = -1;
 
-  // compile_win.stdout.on('data', function (chunk) {
-  //   console.log(chunk.toString());
-  // });
+  var compile_win = spawn('tntbuild', ['--no-osx-build', './make/package.json']);
+
+  compile_win.stdout.on('data', function (chunk) {
+    if (phase != 1 && chunk.toString().indexOf(phases[phase + 1].toLowerCase()) != -1) {
+      phase++;
+      console.log(phases[phase] + '...');
+    }
+  });
 
   compile_win.on('close', function () {
     // Return from task
@@ -65,7 +79,7 @@ gulp.task('compile-all', ['remove-non-app-deps'], function (next) {
   compile_all.stdout.on('data', function (chunk) {
     if (phase != 3 && chunk.toString().indexOf(phases[phase + 1].toLowerCase()) != -1) {
       phase++;
-      console.log('tntbuild:', phases[phase] + '...');
+      console.log(phases[phase] + '...');
     }
   });
 
@@ -73,7 +87,7 @@ gulp.task('compile-all', ['remove-non-app-deps'], function (next) {
     // Return from task
     next();
   });
-});
+// });
 
 // Delete subdirs
 gulp.task('clean', ['compile-all'], function (next) {
