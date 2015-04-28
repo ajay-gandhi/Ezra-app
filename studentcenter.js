@@ -447,24 +447,22 @@ var login_check = function (id, count) {
   return new Promise(function (resolve, reject) {
     rp(urls.campuslife + '/login-check.php?skey=' + id)
       .then(function (b) {
-        // If tried 4 times, quit
-        if (count >= 4) {
+        // If tried 10 times, quit
+        if (count >= 10) {
           reject(false);
         }
 
         // Check if the XML message = 1 or not
         if ((b.split('1').length - 1) != 2) {
-          // Login has not been accepted yet, so try again in 0.5s
-          setTimeout(function () {
-            count++;
-            login_check(id, count)
-              .then(function () {
-                resolve(true);
-              })
-              .catch(function () {
-                reject(false);
-              });
-          }, 500);
+          // Login has not been accepted yet, so try again
+          count++;
+          login_check(id, count)
+            .then(function () {
+              resolve(true);
+            })
+            .catch(function () {
+              reject(false);
+            });
 
         } else {
           // Login accepted by their server, return true
