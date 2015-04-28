@@ -3,13 +3,19 @@
 var jf            = require('jsonfile'),
     StudentCenter = require('./studentcenter.js'),
     rp            = require('request-promise'),
-    keychain      = require('xkeychain');
+    keychain      = require('xkeychain'),
+    fs            = require('fs');
 
 // Location of settings file in user's home dir
 var settings_file = process.env[(process.platform == 'win32')
   ? 'USERPROFILE'
   : 'HOME']
   + '/.ezra-settings';
+
+// Create file if it doesn't exist
+fs.open(settings_file, 'a', function (err, fd) {
+  fs.close(fd);
+});
 
 // Keep netid and pw for keychain possibly
 var netid, password;
@@ -70,7 +76,10 @@ module.exports['/settings'] = function (body, res) {
     res.send(settings);
   } else {
     jf.readFile(settings_file, function (err, obj) {
-      res.send(obj);
+      if (err)
+        res.send(err);
+      else
+        res.send(obj);
     });
   }
 };
@@ -98,7 +107,7 @@ module.exports['/update-settings'] = function (body, res) {
     // Write to settings file
     jf.writeFile(settings_file, obj, function(err) {
       if (err) {
-        console.log('1', err);
+        console.log(err);
       } else {
 
         // Settings file updated, now update keychain
@@ -109,7 +118,7 @@ module.exports['/update-settings'] = function (body, res) {
             service: 'Ezra'
           }, function (err) {
             if (err) {
-              console.log('2', err);
+              console.log(err);
             } else {
               res.send(true);
             }
@@ -122,7 +131,7 @@ module.exports['/update-settings'] = function (body, res) {
             password: password
           }, function(err) {
             if (err) {
-              console.log('3', err);
+              console.log(err);
             } else {
               res.send(true);
             }

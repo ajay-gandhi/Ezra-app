@@ -48,13 +48,13 @@ application.name = 'Ezra';
 
 /* The window */
 var win = new Window(); // initially hidden.
-win.title = 'Ezra';
-win.appearance = 'dark';
-win.canBeFullscreen = false;
-win.width = 900;
-win.height = 620;
-win.animateOnSizeChange = true;
-win.resizable = false;
+    win.title = 'Ezra';
+    win.appearance = 'dark';
+    win.canBeFullscreen = false;
+    win.width = 900;
+    win.height = 620;
+    win.animateOnSizeChange = true;
+    win.resizable = false;
 
 // Center window
 var screens = require('Screens');
@@ -144,6 +144,7 @@ webview.addEventListener('load', function() {
   }
 });
 
+// Setup toolbars, etc
 var setup = require('./setup')(win, webview);
     setup.createToolbar();
     setup.createMenus();
