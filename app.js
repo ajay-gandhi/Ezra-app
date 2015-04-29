@@ -62,31 +62,32 @@ win.x       = (active.bounds.width / 2) - 450;
 win.y       = (active.bounds.height / 2) - 310;
 
 /* Loading progress */
-var progress_window = new Window();
-    progress_window.title = 'Loading';
-    progress_window.appearance = 'dark';
+// Requires a window, bg, and the bar itself
+var progress_window                 = new Window();
+    progress_window.title           = 'Loading';
+    progress_window.appearance      = 'dark';
     progress_window.canBeFullscreen = false;
-    progress_window.width = 300;
-    progress_window.height = 100;
-    progress_window.resizable = false;
-    progress_window.visible = true;
-    progress_window.x       = (active.bounds.width / 2) - 150;
-    progress_window.y       = (active.bounds.height / 2) - 50;
+    progress_window.width           = 300;
+    progress_window.height          = 100;
+    progress_window.resizable       = false;
+    progress_window.visible         = true;
+    progress_window.x               = (active.bounds.width / 2) - 150;
+    progress_window.y               = (active.bounds.height / 2) - 50;
 
-var progress_bg = new Box();
-    progress_bg.top = 10;
-    progress_bg.left = 0;
-    progress_bg.right = 0;
-    progress_bg.height = 50;
+var progress_bg                 = new Box();
+    progress_bg.top             = 10;
+    progress_bg.left            = 0;
+    progress_bg.right           = 0;
+    progress_bg.height          = 50;
     progress_bg.backgroundColor = '#2E2E2E';
 
-var progress = new Box();
-    progress.top = 11;
-    progress.left = 0;
-    progress.width = 0;
-    progress.height = 48;
-    progress.borderColor = '#787878';
-    progress.backgroundColor = '#787878';
+var progress                     = new Box();
+    progress.top                 = 11;
+    progress.left                = 0;
+    progress.width               = 0;
+    progress.height              = 48;
+    progress.borderColor         = '#787878';
+    progress.backgroundColor     = '#787878';
     progress.animateOnSizeChange = true;
 
 progress_window.appendChild(progress_bg);
@@ -124,10 +125,13 @@ webview.addEventListener('message', function(msg) {
 // Fetch and send password when login loaded. Also autologin
 // This displays the window once everything loads
 webview.addEventListener('load', function() {
+  // 20% done
   progress.width = 20 * 3;
 
   var url = webview.location;
   if (url.indexOf('login.html', url.length - 10) !== -1) {
+    // Pass the progress bar and window to the server so it can update progress
+    // bar and make the window visible
     var locals = {
       w: win,
       p_bar: progress,

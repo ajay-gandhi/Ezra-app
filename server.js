@@ -150,6 +150,7 @@ module.exports['/pass'] = function (body, res) {
       progress_window = body.p_win;
 
   jf.readFile(settings_file, function (err, obj) {
+    // 40% done
     progress_bar.width = 40 * 3;
 
     settings = obj;
@@ -159,6 +160,7 @@ module.exports['/pass'] = function (body, res) {
           account: settings.netid,
           service: 'Ezra'
         }, function (err, pass) {
+          // 50% done
           progress_bar.width = 50 * 3;
 
           if (!err) {
@@ -168,10 +170,13 @@ module.exports['/pass'] = function (body, res) {
             if (settings.autologin) {
               // If autologin, have to ensure zombie initialized
               // Then login
+
+              // 55% done
               progress_bar.width = 55 * 3;
               student
                 .init()
                 .then(function (sc_new) {
+                  // 80% done
                   progress_bar.width = 80 * 3;
                   console.log('Autologin ready');
                   return sc_new.login(settings.netid, password);
@@ -179,6 +184,7 @@ module.exports['/pass'] = function (body, res) {
                 .then(function (sc_new) {
                   // Store the student's headless browser locally
                   student = sc_new;
+                  // 90% done
                   progress_bar.width = 90 * 3;
                   res.where.location = 'app://html/index.html';
                   res.send(true);
