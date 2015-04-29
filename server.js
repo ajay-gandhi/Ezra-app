@@ -220,6 +220,13 @@ module.exports['/pass'] = function (body, res) {
 
               win.visible = true;
             }
+          } else {
+            // Everything done
+            // Hide progress window
+            progress_bar.width = 100 * 3;
+            progress_window.visible = false;
+
+            win.visible = true;
           }
         });
 
@@ -231,6 +238,13 @@ module.exports['/pass'] = function (body, res) {
 
         win.visible = true;
       }
+    } else {
+      // Everything done
+      // Hide progress window
+      progress_bar.width = 100 * 3;
+      progress_window.visible = false;
+
+      win.visible = true;
     }
   });
 };
