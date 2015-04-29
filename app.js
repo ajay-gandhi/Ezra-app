@@ -91,11 +91,12 @@ webview.addEventListener('message', function(msg) {
   server[data.namespace](data.body, new Response(data.namespace, webview));
 });
 
-// Fetch and send password when login loaded
+// Fetch and send password when login loaded. Also autologin
+// This displays the window once everything loads
 webview.addEventListener('load', function() {
   var url = webview.location;
   if (url.indexOf('login.html', url.length - 10) !== -1) {
-    server['/pass'](null, new Response('/pass', webview));
+    server['/pass'](win, new Response('/pass', webview));
   }
 });
 
@@ -114,7 +115,7 @@ jf.readFile(__dirname + '/package.json', function(err, obj) {
 
   rp('https://raw.githubusercontent.com/ajay-gandhi/Ezra-app/master/package.json')
   .then(function (body) {
-    if (JSON.parse(body).version !== obj.version) {
+    if (JSON.parse(body).version === obj.version) {
       // Must update
       var update_required            = new Dialog();
           update_required.icon       = 'caution';
@@ -136,13 +137,3 @@ jf.readFile(__dirname + '/package.json', function(err, obj) {
     }
   });
 });
-
-webview.addEventListener('load', function() {
-  // Fetch and send password when login loaded
-  var url = webview.location;
-  if (url.indexOf('login.html', url.length - 10) !== -1) {
-    server['/pass'](null, new Response('/pass', webview));
-  }
-});
-
-win.visible = true;

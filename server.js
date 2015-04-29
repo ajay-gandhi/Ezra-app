@@ -39,7 +39,6 @@ student
 // Login user
 module.exports['/login'] = function (body, res) {
   // Get the username and pw from the request
-
   netid    = body.netid;
   password = body.password;
 
@@ -57,6 +56,7 @@ module.exports['/login'] = function (body, res) {
     });
 }
 
+// Update url if login successful
 module.exports['/login-successful'] = function (body, res) {
   res.where.location = 'app://html/index.html';
 };
@@ -143,6 +143,7 @@ module.exports['/update-settings'] = function (body, res) {
   });
 };
 
+// Serve password if saved. Also autologin
 module.exports['/pass'] = function (body, res) {
   jf.readFile(settings_file, function (err, obj) {
     settings = obj;
@@ -153,20 +154,55 @@ module.exports['/pass'] = function (body, res) {
           service: 'Ezra'
         }, function (err, pass) {
           if (!err) {
+            // Save locally
             password = pass;
 
-            res.send({
-              user: settings.netid,
-              password: password
-            });
+            if (settings.autologin) {
+              // If autologin, have to ensure zombie initialized
+              // Then login
+              student
+                .init()
+                .then(function (sc_new) {
+                  console.log('Autologin ready');
+                  return sc_new.login(settings.netid, password);
+                })
+                .then(function (sc_new) {
+                  // Store the student's headless browser locally
+                  student = sc_new;
+                  res.where.location = 'app://html/index.html';
+                  res.send(true);
+
+                  // Only show window once login complete
+                  res.where.addEventListener('load', function() {
+                    var url = res.where.location;
+                    if (url.indexOf('index.html', url.length - 10) !== -1) {
+                      body.visible = true;
+                    }
+                  });
+                })
+                .catch(function (err) {
+                  console.error(err);
+                  // The login failed
+                  res.send(false);
+                });
+
+            } else {
+              // No autologin, just send pw
+              res.send({
+                user: settings.netid,
+                password: password
+              });
+
+              body.visible = true;
+            }
           }
         });
       }
     }
   });
-}
+};
 
-
+// Serve student info
 module.exports['/information'] = function (body, res) {
   student
     .getInformation()
@@ -175,9 +211,7 @@ module.exports['/information'] = function (body, res) {
     });
 };
 
-/**
- * Gets menu informaiton. Sends it to webview.
- */
+// Sends menu information
 module.exports['/menus'] = function (body, res) {
   rp('http://redapi-tious.rhcloud.com/dining/menu/ALL/ALL/LOCATIONS')
     .then(function (info) {
