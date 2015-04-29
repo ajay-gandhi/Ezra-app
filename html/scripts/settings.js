@@ -15,14 +15,42 @@ $(document).ready(function () {
   app.receive('/settings', function (data) {
     settings = data;
     $('input#toggle-remember-box').prop('checked', data.remember);
+    $('input#toggle-autologin-box').prop('checked', data.autologin);
     $('input#toggle-id-image-box').prop('checked', data.hide_id_image);
+
+    // Disable remember me if autologin
+    if (settings.autologin)
+      $('input#toggle-remember-box').prop('disabled', true);
   });
 
   // Click event for remember me
   $('div#toggle-remember')
     .click(function () {
-      settings.remember = !settings.remember;
-      $('input#toggle-remember-box').prop('checked', settings.remember);
+      if (!settings.autologin) {
+        settings.remember = !settings.remember;
+        $('input#toggle-remember-box').prop('checked', settings.remember);
+        update_settings();
+      }
+    });
+
+  // Click event for autologin
+  $('div#toggle-autologin')
+    .click(function () {
+      settings.autologin = !settings.autologin;
+      $('input#toggle-autologin-box').prop('checked', settings.autologin);
+
+      // Remember me is required for autologin
+      if (settings.autologin) {
+        // If autologin, disable remember me
+        settings.remember = true;
+        $('input#toggle-remember-box').prop('checked', settings.remember);
+        $('input#toggle-remember-box').prop('disabled', true);
+
+      } else {
+        // Enable input
+        $('input#toggle-remember-box').prop('disabled', false);
+      }
+
       update_settings();
     });
 
