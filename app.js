@@ -99,6 +99,7 @@ webview.addEventListener('load', function() {
   }
 });
 
+// Setup toolbars, etc
 var setup = require('./setup')(win, webview);
     setup.createToolbar();
     setup.createMenus();
@@ -143,10 +144,5 @@ webview.addEventListener('load', function() {
     server['/pass'](null, new Response('/pass', webview));
   }
 });
-
-// Setup toolbars, etc
-var setup = require('./setup')(win, webview);
-    setup.createToolbar();
-    setup.createMenus();
 
 win.visible = true;
