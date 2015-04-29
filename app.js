@@ -47,22 +47,52 @@ application.exitAfterWindowsClose = true;
 application.name = 'Ezra';
 
 /* The window */
-var win = new Window(); // initially hidden.
-    win.title = 'Ezra';
-    win.appearance = 'dark';
-    win.canBeFullscreen = false;
-    win.width = 900;
-    win.height = 620;
-    win.animateOnSizeChange = true;
-    win.resizable = false;
+var win                     = new Window(); // initially hidden.
+    win.title               = 'Ezra';
+    win.appearance          = 'dark';
+    win.canBeFullscreen     = false;
+    win.width               = 900;
+    win.height              = 620;
+    win.resizable           = false;
 
 // Center window
 var screens = require('Screens');
-var active = screens.active;
-win.x = (active.bounds.width / 2) - 450;
-win.y = (active.bounds.height / 2) - 310;
+var active  = screens.active;
+win.x       = (active.bounds.width / 2) - 450;
+win.y       = (active.bounds.height / 2) - 310;
 
-/* The web view. */
+/* Loading progress */
+var progress_window = new Window();
+    progress_window.title = 'Loading';
+    progress_window.appearance = 'dark';
+    progress_window.canBeFullscreen = false;
+    progress_window.width = 300;
+    progress_window.height = 100;
+    progress_window.resizable = false;
+    progress_window.visible = true;
+    progress_window.x       = (active.bounds.width / 2) - 150;
+    progress_window.y       = (active.bounds.height / 2) - 50;
+
+var progress_bg = new Box();
+    progress_bg.top = 10;
+    progress_bg.left = 0;
+    progress_bg.right = 0;
+    progress_bg.height = 50;
+    progress_bg.backgroundColor = '#2E2E2E';
+
+var progress = new Box();
+    progress.top = 11;
+    progress.left = 0;
+    progress.width = 0;
+    progress.height = 48;
+    progress.borderColor = '#787878';
+    progress.backgroundColor = '#787878';
+    progress.animateOnSizeChange = true;
+
+progress_window.appendChild(progress_bg);
+progress_window.appendChild(progress);
+
+/* The web view */
 var webview = new WebView();
     webview.top = 0;
     webview.left = webview.right = webview.bottom = 0;
@@ -94,9 +124,16 @@ webview.addEventListener('message', function(msg) {
 // Fetch and send password when login loaded. Also autologin
 // This displays the window once everything loads
 webview.addEventListener('load', function() {
+  progress.width = 20 * 3;
+
   var url = webview.location;
   if (url.indexOf('login.html', url.length - 10) !== -1) {
-    server['/pass'](win, new Response('/pass', webview));
+    var locals = {
+      w: win,
+      p_bar: progress,
+      p_win: progress_window
+    }
+    server['/pass'](locals, new Response('/pass', webview));
   }
 });
 
@@ -115,7 +152,7 @@ jf.readFile(__dirname + '/package.json', function(err, obj) {
 
   rp('https://raw.githubusercontent.com/ajay-gandhi/Ezra-app/master/package.json')
   .then(function (body) {
-    if (JSON.parse(body).version === obj.version) {
+    if (JSON.parse(body).version !== obj.version) {
       // Must update
       var update_required            = new Dialog();
           update_required.icon       = 'caution';

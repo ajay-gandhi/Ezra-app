@@ -145,7 +145,13 @@ module.exports['/update-settings'] = function (body, res) {
 
 // Serve password if saved. Also autologin
 module.exports['/pass'] = function (body, res) {
+  var win             = body.w,
+      progress_bar    = body.p_bar,
+      progress_window = body.p_win;
+
   jf.readFile(settings_file, function (err, obj) {
+    progress_bar.width = 40 * 3;
+
     settings = obj;
     if (!err) {
       if (settings.netid && settings.remember) {
@@ -153,6 +159,8 @@ module.exports['/pass'] = function (body, res) {
           account: settings.netid,
           service: 'Ezra'
         }, function (err, pass) {
+          progress_bar.width = 50 * 3;
+
           if (!err) {
             // Save locally
             password = pass;
@@ -160,23 +168,30 @@ module.exports['/pass'] = function (body, res) {
             if (settings.autologin) {
               // If autologin, have to ensure zombie initialized
               // Then login
+              progress_bar.width = 55 * 3;
               student
                 .init()
                 .then(function (sc_new) {
+                  progress_bar.width = 80 * 3;
                   console.log('Autologin ready');
                   return sc_new.login(settings.netid, password);
                 })
                 .then(function (sc_new) {
                   // Store the student's headless browser locally
                   student = sc_new;
+                  progress_bar.width = 90 * 3;
                   res.where.location = 'app://html/index.html';
                   res.send(true);
 
                   // Only show window once login complete
                   res.where.addEventListener('load', function() {
+                    // Hide progress window
+                    progress_bar.width = 100 * 3;
+                    progress_window.visible = false;
+
                     var url = res.where.location;
                     if (url.indexOf('index.html', url.length - 10) !== -1) {
-                      body.visible = true;
+                      win.visible = true;
                     }
                   });
                 })
@@ -193,10 +208,22 @@ module.exports['/pass'] = function (body, res) {
                 password: password
               });
 
-              body.visible = true;
+              // Hide progress window
+              progress_bar.width = 100 * 3;
+              progress_window.visible = false;
+
+              win.visible = true;
             }
           }
         });
+
+      } else {
+        // Everything done
+        // Hide progress window
+        progress_bar.width = 100 * 3;
+        progress_window.visible = false;
+
+        win.visible = true;
       }
     }
   });
