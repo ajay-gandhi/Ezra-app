@@ -9,6 +9,24 @@ var screens = require('Screens');
 function Setup(w, view) {
   this.w = w;
   this.view = view;
+
+  // Display about window
+  var active = screens.active;
+  this.about_panel                 = new Panel();
+  this.about_panel.title           = 'About ' + application.name;
+  this.about_panel.appearance      = 'dark';
+  this.about_panel.canBeFullscreen = false;
+  this.about_panel.width           = 300;
+  this.about_panel.height          = 400;
+  this.about_panel.x               = (active.bounds.width / 2) - 150;
+  this.about_panel.y               = (active.bounds.height / 2) - 200;
+  this.about_panel.resizable       = false;
+
+  // Actual content
+  var about_webview = new WebView();
+      about_webview.location = 'app://html/about.html';
+
+  this.about_panel.appendChild(about_webview);
 }
 
 /**
@@ -97,6 +115,7 @@ Setup.prototype.createToolbar = function () {
  */
 Setup.prototype.createMenus = function() {
   var win = this.w;
+  var about_panel = this.about_panel;
 
   var ismac      = require('os').platform().toLowerCase() == 'darwin';
   var mainMenu   = new Menu();
@@ -116,24 +135,8 @@ Setup.prototype.createMenus = function() {
   var appleSubmenu = new Menu(application.name);
   appleSubmenu.appendChild(new MenuItem('About '+application.name, ''))
     .addEventListener('click', function() {
-      // Display about window
-      var active = screens.active;
-      var about_panel = new Panel();
-          about_panel.title = 'About ' + application.name;
-          about_panel.appearance = 'dark';
-          about_panel.canBeFullscreen = false;
-          about_panel.width = 300;
-          about_panel.height = 400;
-          about_panel.x = (active.bounds.width / 2) - 150;
-          about_panel.y = (active.bounds.height / 2) - 200;
-
-      // Actual content
-      var about_webview = new WebView();
-          about_webview.location = 'app://html/about.html';
-          about_panel.appendChild(about_webview);
-
+      // Show about panel
       about_panel.visible = true;
-
     });
   appleSubmenu.appendChild(new MenuItemSeparator());
   appleSubmenu.appendChild(new MenuItem('Hide '+application.name, 'h'))
