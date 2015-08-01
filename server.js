@@ -221,6 +221,7 @@ module.exports['/pass'] = function (body, res) {
               win.visible = true;
             }
           } else {
+            console.log(err);
             // Everything done
             // Hide progress window
             progress_bar.width = 100 * 3;

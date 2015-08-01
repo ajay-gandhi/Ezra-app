@@ -20,11 +20,11 @@ $(document).ready(function () {
       '<div class="information-group">' +
         '<div class="information-label">Student ID</div>' +
         '<div class="information-option">' + data.student_id + '</div>' +
-      '</div>' +
-      '<div class="information-group">' +
-        '<div class="information-label">ID Image</div>' +
-        '<div class="information-option"><img src="' + data.image + '" /></div>' +
       '</div>';
+      // '<div class="information-group">' +
+      //   '<div class="information-label">ID Image</div>' +
+      //   '<div class="information-option"><img src="' + data.image + '" /></div>' +
+      // '</div>';
 
     // Student's pwd to card.campuslife may differ
     if (data.login == false) {
@@ -42,7 +42,7 @@ $(document).ready(function () {
           '<div class="information-group">' +
             '<div id="diff-pwd">' +
             'There was an error while getting your dining information.' +
-            'Try restarting the app 💸' +
+            'Try restarting the app!' +
             '</div>' +
           '</div>';
 

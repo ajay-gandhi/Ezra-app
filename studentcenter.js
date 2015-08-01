@@ -1,11 +1,12 @@
+
 var Zombie  = require('zombie'),
     Promise = require('es6-promise').Promise,
     rp = require('request-promise');
 
 var urls = {
   main: 'http://studentcenter.cornell.edu',
-  grades: 'https://selfservice.adminapps.cornell.edu/psc/cuselfservice/EMPLOYEE/HRMS/c/SA_LEARNER_SERVICES.SSR_SSENRL_GRADE.GBL',
-  demographics: 'https://selfservice.adminapps.cornell.edu/psc/cuselfservice/EMPLOYEE/HRMS/c/CC_PORTFOLIO.SS_CC_DEMOG_DATA.GBL',
+  // grades: 'https://selfservice.adminapps.cornell.edu/psc/cuselfservice/EMPLOYEE/HRMS/c/SA_LEARNER_SERVICES.SSR_SSENRL_GRADE.GBL',
+  demographics: 'https://css.adminapps.cornell.edu/psc/cuselfservice/EMPLOYEE/HRMS/c/CC_PORTFOLIO.SS_CC_DEMOG_DATA.GBL',
   campuslife: 'https://card.campuslife.cornell.edu'
 }
 
@@ -66,7 +67,6 @@ module.exports = (function () {
       browser
         .fill('netid', netid)
         .fill('password', password)
-        .select('realm', 'CIT.CORNELL.EDU')
         .pressButton('Submit')
         .then(function () {
           if (browser.text('title') === 'Student Center') {
@@ -134,122 +134,124 @@ module.exports = (function () {
     });
   }
 
-  /**
-   * Fetches the semesters for which a student's grades are available
-   * Returns: [Array] An array of strings of the format 'Spring 2015'
-   */
-  StudentCenter.prototype.getGradeSemesters = function () {
-    var browser = this.browser;
+  // StudentCenter was updated, this code no longer functions
+  //
+  // /**
+  //  * Fetches the semesters for which a student's grades are available
+  //  * Returns: [Array] An array of strings of the format 'Spring 2015'
+  //  */
+  // StudentCenter.prototype.getGradeSemesters = function () {
+  //   var browser = this.browser;
 
-    return new Promise(function (resolve, reject) {
-      // Visit grades page
-      browser
-        .visit(urls.grades)
-        .then(function () {
+  //   return new Promise(function (resolve, reject) {
+  //     // Visit grades page
+  //     browser
+  //       .visit(urls.grades)
+  //       .then(function () {
 
-          var semesters_table = browser.query("table[id^=SSR_DUMMY_RECV1]");
-          var rows = semesters_table.tBodies[0].children;
+  //         var semesters_table = browser.query("table[id^=SSR_DUMMY_RECV1]");
+  //         var rows = semesters_table.tBodies[0].children;
 
-          // Iterate over children, ignoring elements that are not table rows
-          // and first two rows
-          var semesters = [];
-          for (var i = 2; i < rows.length; i++) {
+  //         // Iterate over children, ignoring elements that are not table rows
+  //         // and first two rows
+  //         var semesters = [];
+  //         for (var i = 2; i < rows.length; i++) {
 
-            var child = rows[i];
-            if (child.tagName.toLowerCase() === 'tr') {
-              semesters.push(child.children[1].textContent.trim());
-            }
-          }
+  //           var child = rows[i];
+  //           if (child.tagName.toLowerCase() === 'tr') {
+  //             semesters.push(child.children[1].textContent.trim());
+  //           }
+  //         }
 
-          // Go back to student center main page
-          browser.visit(urls.main);
+  //         // Go back to student center main page
+  //         browser.visit(urls.main);
 
-          resolve(semesters);
+  //         resolve(semesters);
 
-        });
-    });
-  }
+  //       });
+  //   });
+  // }
 
-  /**
-   * Fetches the student's grades for a given semester
-   * Returns: [Array] An array of objects containing grading data
-   *   Each object followed the following format:
-   *     number:  course number (DEP XXXX)
-   *     name:    name of the course
-   *     credits: number of credits
-   *     grading: graded or pass/fail
-   *     letter:  letter grade
-   *     gpa:     amount it contributes to your GPA; calculated by weighting
-   *                letter grade by number of credits
-   * 
-   */
-  StudentCenter.prototype.getGrades = function (semester) {
-    var browser = this.browser;
+  // /**
+  //  * Fetches the student's grades for a given semester
+  //  * Returns: [Array] An array of objects containing grading data
+  //  *   Each object followed the following format:
+  //  *     number:  course number (DEP XXXX)
+  //  *     name:    name of the course
+  //  *     credits: number of credits
+  //  *     grading: graded or pass/fail
+  //  *     letter:  letter grade
+  //  *     gpa:     amount it contributes to your GPA; calculated by weighting
+  //  *                letter grade by number of credits
+  //  * 
+  //  */
+  // StudentCenter.prototype.getGrades = function (semester) {
+  //   var browser = this.browser;
 
-    return new Promise(function (resolve, reject) {
-      // Visit grades page
-      browser
-        .visit(urls.grades)
-        .then(function () {
+  //   return new Promise(function (resolve, reject) {
+  //     // Visit grades page
+  //     browser
+  //       .visit(urls.grades)
+  //       .then(function () {
 
-          var semesters_table = browser.query('table[id^=SSR_DUMMY_RECV1]');
-          var rows = semesters_table.tBodies[0].children;
+  //         var semesters_table = browser.query('table[id^=SSR_DUMMY_RECV1]');
+  //         var rows = semesters_table.tBodies[0].children;
 
-          // Iterate over children, ignoring elements that are not table rows
-          // and first two rows
-          var semesters = [];
-          for (var i = 2; i < rows.length; i++) {
+  //         // Iterate over children, ignoring elements that are not table rows
+  //         // and first two rows
+  //         var semesters = [];
+  //         for (var i = 2; i < rows.length; i++) {
 
-            var child = rows[i];
-            if (child.tagName.toLowerCase() === 'tr') {
-              if (child.children[1].textContent.trim() == semester) {
-                // Click the proper semester radio button
-                child.children[0].children[0].click();
-              }
-            }
-          }
+  //           var child = rows[i];
+  //           if (child.tagName.toLowerCase() === 'tr') {
+  //             if (child.children[1].textContent.trim() == semester) {
+  //               // Click the proper semester radio button
+  //               child.children[0].children[0].click();
+  //             }
+  //           }
+  //         }
 
-          // Simulate running a JS function on the page that does all this stuff
-          // below, no idea why it's necessary or what it does. It's something
-          // from PeopleSoft
-          browser.document.forms[0].elements['ICAction'].value   = 'DERIVED_SSS_SCT_SSR_PB_GO';
-          browser.document.forms[0].elements['ICXPos'].value     = '100';
-          browser.document.forms[0].elements['ICYPos'].value     = '100';
-          browser.document.forms[0].elements['ICResubmit'].value = '0';
-          browser.document.forms[0].submit();
-          return browser.wait();
-        })
-        .then(function () {
+  //         // Simulate running a JS function on the page that does all this stuff
+  //         // below, no idea why it's necessary or what it does. It's something
+  //         // from PeopleSoft
+  //         browser.document.forms[0].elements['ICAction'].value   = 'DERIVED_SSS_SCT_SSR_PB_GO';
+  //         browser.document.forms[0].elements['ICXPos'].value     = '100';
+  //         browser.document.forms[0].elements['ICYPos'].value     = '100';
+  //         browser.document.forms[0].elements['ICResubmit'].value = '0';
+  //         browser.document.forms[0].submit();
+  //         return browser.wait();
+  //       })
+  //       .then(function () {
 
-          var grades_table = browser.query('table.PSLEVEL1GRID');
-          var rows = grades_table.tBodies[0].children;
+  //         var grades_table = browser.query('table.PSLEVEL1GRID');
+  //         var rows = grades_table.tBodies[0].children;
 
-          // Iterate over children, ignoring elements that are not table rows
-          // and first row
-          var grades = [];
-          for (var i = 1; i < rows.length; i++) {
+  //         // Iterate over children, ignoring elements that are not table rows
+  //         // and first row
+  //         var grades = [];
+  //         for (var i = 1; i < rows.length; i++) {
 
-            var child = rows[i];
-            if (child.tagName.toLowerCase() === 'tr') {
-              grades.push({
-                number:  child.children[0].textContent.trim(),
-                name:    child.children[1].textContent.trim(),
-                credits: child.children[2].textContent.trim(),
-                grading: child.children[3].textContent.trim(),
-                letter:  child.children[4].textContent.trim(),
-                gpa:     child.children[5].textContent.trim()
-              });
-            }
-          }
+  //           var child = rows[i];
+  //           if (child.tagName.toLowerCase() === 'tr') {
+  //             grades.push({
+  //               number:  child.children[0].textContent.trim(),
+  //               name:    child.children[1].textContent.trim(),
+  //               credits: child.children[2].textContent.trim(),
+  //               grading: child.children[3].textContent.trim(),
+  //               letter:  child.children[4].textContent.trim(),
+  //               gpa:     child.children[5].textContent.trim()
+  //             });
+  //           }
+  //         }
 
-          // Go back to student center main page
-          browser.visit(urls.main);
+  //         // Go back to student center main page
+  //         browser.visit(urls.main);
 
-          resolve(grades);
+  //         resolve(grades);
 
-        });
-    });
-  }
+  //       });
+  //   });
+  // }
 
   /**
    * Returns an object containing information about the student, e.g. advisor.
@@ -323,7 +325,7 @@ module.exports = (function () {
           var image_url;
 
           for (var i = 0; i < images.length; i++) {
-            if (images[i].src.indexOf('/cs/cuselfservice/cache/EMPL_PHOTO_') > -1) {
+            if (images[i].src.indexOf('/cs/cuselfservice/cache/EMPL_PHOTO_') >= 0) {
               image_url = images[i].src;
             }
           }
@@ -337,13 +339,19 @@ module.exports = (function () {
           });
         })
         .then(function (response) {
-          var body = response.body;
-          var data_uri_prefix = 'data:' + response.headers['content-type'] + ';base64,';
+          // RP can no longer access the URL...it's accessible through zombie
+          // but can't save image data
+          //
+          // no id image until this is fixed
 
-          // Decode the binary image
-          var image = new Buffer(body, 'binary').toString('base64');
+          // var body = response.body;
+          // console.log(body);
+          // var data_uri_prefix = 'data:' + response.headers['content-type'] + ';base64,';
 
-          info.image = data_uri_prefix + image;
+          // // Decode the binary image
+          // var image = new Buffer(body, 'binary').toString('base64');
+
+          // info.image = data_uri_prefix + image;
 
           /**************************/
           /** Get account balances **/
@@ -379,16 +387,27 @@ module.exports = (function () {
             // Result is a JavaScript redirect, but runScripts = false
             // Extract URL and manually redirect
             var rgx = /'(.*?)'/i;
-            var text = browser.text('body');
+            var body = browser.text('body');
 
-            var url = text.match(rgx)[0];
-            url = url.substr(1, url.length - 2);
+            var redirect_url = body.match(rgx)[0];
+            redirect_url = redirect_url.substr(1, redirect_url.length - 2);
 
-            id = url;
+            id = redirect_url;
 
             browser
-              .visit(urls.campuslife + url)
+              .visit(urls.campuslife + redirect_url)
+              // Throws a 404 error for some random JS file
+              // Ignore error and cont
+              .then(
+                null,
+                function (e) {
+                  if (e.message.indexOf('404') < 0) {
+                    throw e;
+                  }
+                }
+              )
               .then(function () {
+
                 // Now at intermediate login page
                 // Mimic actions conducted by the JS on this page
                 var ePos = id.indexOf('=');
@@ -418,7 +437,9 @@ module.exports = (function () {
                     resolve(info);
                   });
               })
-              .catch(function () {
+              .catch(function (e) {
+                console.log(browser.runScripts);
+                console.log('Error loading page:', e);
                 // Login failed for some reason, so ignore this portion
 
                 // Reset
@@ -450,6 +471,7 @@ var login_check = function (id, count) {
         // If tried 10 times, quit
         if (count >= 10) {
           reject(false);
+          return;
         }
 
         // Check if the XML message = 1 or not
