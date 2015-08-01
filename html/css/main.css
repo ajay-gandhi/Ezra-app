@@ -62,11 +62,6 @@ div.module {
   height: auto;
   overflow: auto;
 }
-div#schedule {
-  position: relative;
-  height: 550px;
-  overflow: auto;
-}
 
 /* Meta buttons */
 button {
