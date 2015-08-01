@@ -24,7 +24,7 @@
     "jsonfile": "^2.0.0",
     "open": "0.0.5",
     "request-promise": "^0.4.0",
-    "xkeychain": "0.0.5",
+    "xkeychain": "mvhaen/node-xkeychain",
     "zombie": "2.x.x"
   },
   "license": "MIT",
