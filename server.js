@@ -144,10 +144,12 @@ module.exports['/update-settings'] = function (body, res) {
 };
 
 // Serve password if saved. Also autologin
+var win, progress_bar, progress_window, update_required;
 module.exports['/pass'] = function (body, res) {
-  var win             = body.w,
-      progress_bar    = body.p_bar,
-      progress_window = body.p_win;
+  win             = body.w;
+  progress_bar    = body.p_bar;
+  progress_window = body.p_win;
+  update_required = body.updt;
 
   jf.readFile(settings_file, function (err, obj) {
     // 40% done
@@ -191,14 +193,7 @@ module.exports['/pass'] = function (body, res) {
 
                   // Only show window once login complete
                   res.where.addEventListener('load', function() {
-                    // Hide progress window
-                    progress_bar.width = 100 * 3;
-                    progress_window.visible = false;
-
-                    var url = res.where.location;
-                    if (url.indexOf('index.html', url.length - 10) !== -1) {
-                      win.visible = true;
-                    }
+                    is_done();
                   });
                 })
                 .catch(function (err) {
@@ -214,41 +209,36 @@ module.exports['/pass'] = function (body, res) {
                 password: password
               });
 
-              // Hide progress window
-              progress_bar.width = 100 * 3;
-              progress_window.visible = false;
-
-              win.visible = true;
+              is_done();
             }
           } else {
             console.log(err);
-            // Everything done
-            // Hide progress window
-            progress_bar.width = 100 * 3;
-            progress_window.visible = false;
-
-            win.visible = true;
+            is_done();
           }
         });
 
       } else {
-        // Everything done
-        // Hide progress window
-        progress_bar.width = 100 * 3;
-        progress_window.visible = false;
-
-        win.visible = true;
+        is_done();
       }
     } else {
-      // Everything done
-      // Hide progress window
-      progress_bar.width = 100 * 3;
-      progress_window.visible = false;
-
-      win.visible = true;
+      is_done();
     }
   });
 };
+
+/**
+ * To be called when loading has reached 100%
+ * Hides and shows appropriate windows
+ */
+var is_done = function () {
+  // Everything done
+  // Hide progress window
+  progress_bar.width = 100 * 3;
+  progress_window.visible = false;
+
+  win.visible = true;
+  if (update_required) update_required.open();
+}
 
 // Serve student info
 module.exports['/information'] = function (body, res) {

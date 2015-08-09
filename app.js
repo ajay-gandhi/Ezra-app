@@ -32,7 +32,7 @@ Response.prototype.send = function(body) {
   this.where.postMessage(msg);
 };
 
-//////////////////////////////////// Setup. ////////////////////////////////////
+//////////////////////////////////// Setup /////////////////////////////////////
 
 var jf   = require('jsonfile'),
     rp   = require('request-promise'),
@@ -125,6 +125,7 @@ webview.addEventListener('message', function(msg) {
 // Fetch and send password when login loaded. Also autologin
 // This displays the window once everything loads
 webview.addEventListener('load', function() {
+
   // 20% done
   progress.width = 20 * 3;
 
@@ -133,9 +134,10 @@ webview.addEventListener('load', function() {
     // Pass the progress bar and window to the server so it can update progress
     // bar and make the window visible
     var locals = {
-      w: win,
+      w:     win,
       p_bar: progress,
-      p_win: progress_window
+      p_win: progress_window,
+      updt:  update_required
     }
     server['/pass'](locals, new Response('/pass', webview));
   }
@@ -148,24 +150,25 @@ var setup = require('./setup')(win, webview);
 
 //////////////////////////////////// Update ////////////////////////////////////
 
-// Read remote package.json to see if out of date
-jf.readFile(__dirname + '/package.json', function(err, obj) {
-  var dialog_content = 'It looks like your version of Ezra is out of date. ' +
-    'Update to fix errors and get awesome new features! You can update by ' +
-    'downloading the new version from http://ajay-gandhi.github.io/Ezra-app';
+var update_required = false;
 
-  rp('https://raw.githubusercontent.com/ajay-gandhi/Ezra-app/master/package.json')
+// Read remote package.json to see if out of date
+var obj = require(__dirname + '/package.json');
+var dialog_content = 'It looks like your version of Ezra is out of date. ' +
+  'Update to fix errors and get awesome new features! You can update by ' +
+  'downloading the new version from http://ajay-gandhi.github.io/Ezra-app';
+
+rp('https://raw.githubusercontent.com/ajay-gandhi/Ezra-app/master/package.json')
   .then(function (body) {
     if (JSON.parse(body).version !== obj.version) {
-      // Must update
-      var update_required            = new Dialog();
-          update_required.icon       = 'caution';
-          update_required.mainbutton = 'Take me there';
-          update_required.auxbutton  = 'Okay';
-          update_required.message    = dialog_content;
-          update_required.title      = 'Update Required';
 
-      update_required.open();
+      // Must update
+      update_required            = new Dialog();
+      update_required.icon       = 'caution';
+      update_required.mainbutton = 'Take me there';
+      update_required.auxbutton  = 'Okay';
+      update_required.message    = dialog_content;
+      update_required.title      = 'Update Required';
 
       update_required.addEventListener('click', function (which) {
 
@@ -177,4 +180,3 @@ jf.readFile(__dirname + '/package.json', function(err, obj) {
       });
     }
   });
-});
