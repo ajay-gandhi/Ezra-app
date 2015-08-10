@@ -17,12 +17,19 @@ var app = window.messenger;
 $(document).ready(function() {
 
   // Add date to iframe sources
-  var src = $('iframe').attr('src');
-  $('iframe').attr('src', src + '&mode=DAY&dates=' + today + '/' + today);
+  $('iframe').each(function () {
+    $(this).attr('src', $(this).attr('src') + '&mode=DAY&dates=' + today + '/' + today);
+  });
 
   // Request and receive menus
   app.request('/menus', null);
   app.receive('/menus', function (data) {
+    // If error
+    if (data === false) {
+      $('ul.menu')
+        .append('<li><h3>Error getting menus. Try again later!</h3></li>');
+    }
+
     // Iterate over each meal in each dining hall
     for (var location in data) {
       ['Breakfast', 'Brunch', 'Lunch', 'Dinner'].forEach(function (meal) {
