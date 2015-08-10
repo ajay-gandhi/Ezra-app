@@ -37,7 +37,7 @@ student
 
 
 // Login user
-module.exports['/login'] = function (body, res) {
+var server_login = function (body, res) {
   // Get the username and pw from the request
   netid    = body.netid;
   password = body.password;
@@ -50,16 +50,25 @@ module.exports['/login'] = function (body, res) {
       res.send(true);
     })
     .catch(function (err) {
-      console.error(err);
+      if (err.message.indexOf('compareDocumentPosition') >= 0) {
+        // Not init'ed yet, keep trying
+        setTimeout(function () {
+          server_login(body, res);
+        }, 500);
+        return;
+      }
+
       // The login failed
+      console.error(err);
       res.send(false);
     });
 }
+module.exports['/login'] = server_login;
 
 // Update url if login successful
 module.exports['/login-successful'] = function (body, res) {
   res.where.location = 'app://html/index.html';
-};
+}
 
 // Serves the student's courses in JSON
 module.exports['/courses'] = function (body, res) {
@@ -68,7 +77,7 @@ module.exports['/courses'] = function (body, res) {
     .then(function (courses) {
       res.send(courses);
     });
-};
+}
 
 // Serve the settings
 module.exports['/settings'] = function (body, res) {
@@ -82,7 +91,7 @@ module.exports['/settings'] = function (body, res) {
         res.send(obj);
     });
   }
-};
+}
 
 // Update settings
 module.exports['/update-settings'] = function (body, res) {
@@ -141,7 +150,7 @@ module.exports['/update-settings'] = function (body, res) {
       }
     });
   });
-};
+}
 
 // Serve password if saved. Also autologin
 var win, progress_bar, progress_window, update_required;
@@ -224,7 +233,7 @@ module.exports['/pass'] = function (body, res) {
       is_done();
     }
   });
-};
+}
 
 /**
  * To be called when loading has reached 100%
@@ -247,15 +256,21 @@ module.exports['/information'] = function (body, res) {
     .then(function (info) {
       res.send(info);
     });
-};
+}
 
 // Sends menu information
 module.exports['/menus'] = function (body, res) {
-  rp('http://redapi-tious.rhcloud.com/dining/menu/ALL/ALL/LOCATIONS')
+  var options = {
+    url:     'http://redapi-tious.rhcloud.com/dining/menu/ALL/ALL/LOCATIONS',
+    timeout: 8000
+  }
+
+  rp(options)
     .then(function (info) {
       res.send(JSON.parse(info));
     })
     .catch(function (err) {
+      res.send(false);
       console.trace(err);
     });
-};
+}
