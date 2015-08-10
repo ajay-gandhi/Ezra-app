@@ -47,7 +47,7 @@ console.error = console.debug = console.info = console.log;
 function Messenger () {
 
   var self = this;
-  this.listeners = {};
+  this.listeners = [];
 
   if (!window.postMessageToHost) {
     console.log('Not running on tint! Messages not supported');
@@ -97,7 +97,6 @@ var handle_message = function(message) {
  *   received on the given namespace
  */
 Messenger.prototype.receive = function(namespace, handler) {
-
   this.listeners[namespace] = handler;
 }
 

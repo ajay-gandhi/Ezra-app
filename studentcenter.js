@@ -25,8 +25,8 @@ module.exports = (function () {
    * Returns: [Promise] The newly initialized StudentCenter object
    */
   StudentCenter.prototype.init = function () {
-    var self = this;
-    var browser = self.browser;
+    var self    = this,
+        browser = self.browser;
 
     return new Promise(function (resolve, reject) {
       // Visit Student Center
@@ -56,10 +56,10 @@ module.exports = (function () {
    *   if login was unsuccessful.
    */
   StudentCenter.prototype.login = function (netid, password) {
-    this.netid = netid;
+    this.netid    = netid;
     this.password = password;
-    var self = this;
-    var browser = self.browser;
+    var self      = this,
+        browser   = self.browser;
 
     return new Promise(function (resolve, reject) {
 
@@ -261,8 +261,8 @@ module.exports = (function () {
    *   - Bursar charges
    */
   StudentCenter.prototype.getInformation = function () {
-    var self = this;
-    var browser = self.browser;
+    var self    = this,
+        browser = self.browser;
 
     return new Promise(function (resolve, reject) {
       var info = {};
