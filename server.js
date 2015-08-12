@@ -70,6 +70,33 @@ module.exports['/login-successful'] = function (body, res) {
   res.where.location = 'app://html/index.html';
 }
 
+// Display TOU panel
+var tou_panel;
+module.exports['/terms-of-use'] = function (body, res) {
+  // Create it first
+  if (!tou_panel) {
+    var active = require('Screens').active;
+
+    tou_panel                 = new Panel();
+    tou_panel.title           = 'Terms Of Use, ' + application.name;
+    tou_panel.appearance      = 'dark';
+    tou_panel.canBeFullscreen = false;
+    tou_panel.width           = 300;
+    tou_panel.height          = 400;
+    tou_panel.x               = (active.bounds.width / 2) - 150;
+    tou_panel.y               = (active.bounds.height / 2) - 200;
+    tou_panel.resizable       = false;
+
+    // Actual content
+    var tou_webview = new WebView();
+        tou_webview.location = 'app://html/terms-of-use.html';
+
+    tou_panel.appendChild(tou_webview);
+  }
+
+  tou_panel.visible = true;
+}
+
 // Serves the student's courses in JSON
 module.exports['/courses'] = function (body, res) {
   student

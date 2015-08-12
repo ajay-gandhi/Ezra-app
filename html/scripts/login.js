@@ -10,6 +10,13 @@ $(document).ready(function () {
 
   var app = window.messenger;
 
+  // Click events for Terms Of Use
+  $('a#tou').click(function (e) {
+    e.preventDefault();
+
+    app.request('/terms-of-use', null);
+  });
+
   // Receive password from app if saved
   app.receive('/pass', function (creds) {
     $('input#netid').val(creds.user);

@@ -112,8 +112,8 @@ Messenger.prototype.request = function(namespace, body) {
 
   // Format request
   var msg = JSON.stringify({
-    namespace : namespace,
-    body : body
+    namespace: namespace,
+    body:      body
   });
 
   // Send request
