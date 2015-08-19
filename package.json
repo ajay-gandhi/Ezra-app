@@ -2,6 +2,8 @@
   "name": "Ezra",
   "longname": "Cornell Ezra",
   "namespace": "com.cornellezra",
+  "description": "A native app to replace Cornell's StudentCenter from the 1800s",
+  "author": "Ajay Gandhi, Kevin Chavez",
   "version": "0.1.2",
   "main": "app.js",
   "repository": {
@@ -9,7 +11,8 @@
     "url": "git://github.com/ajay-gandhi/Ezra-app.git"
   },
   "sources": {
-    "directory": "."
+    "directory": ".",
+    "exclude":   ".git|build|gulpfile.js"
   },
   "icon": {
     "osx": [
